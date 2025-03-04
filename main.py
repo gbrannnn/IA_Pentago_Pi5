@@ -1,17 +1,29 @@
 from pentago import Pentago
+from partida import Partida
 
 def main():
     pentago = Pentago()
-    print(pentago.imprimir(pentago.estado_inicial))
+    no_inicial = pentago.iniciar()
+
+    print("\n")
+    print("Pentago Iniciado!!")
+    print(pentago.imprimir(no_inicial))
+    print("\n")
+
     try:
-        for i in range(1,5):
-            estado_novo = pentago.girarDireita(pentago.estado_inicial, "q"+ str(i))
-            print()
-            print(pentago.imprimir(estado_novo))
-            print()
+        Partida.iniciarPartida()
     except Exception as erro:
         print(erro)
-        return
+        
+    # try:
+    #     for i in range(1,5):
+    #         estado_novo = pentago.girarEsquerda(pentago.estado_inicial, "q"+ str(i))
+    #         print()
+    #         print(pentago.imprimir(estado_novo))
+    #         print()
+    # except Exception as erro:
+    #     print(erro)
+    #     return
     return
 
 main()
