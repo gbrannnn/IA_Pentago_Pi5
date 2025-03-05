@@ -21,12 +21,32 @@ class Pentago:
                 ] + "|" + "\n" + "|" + estado[30] + "|" + estado[31] + "|" + estado[32] + "|" + estado[33] + "|" + estado[34] + "|" + estado[35] + "|"                                                                                                                                                                                                                                                                                                                                       
     
     def iniciar(self):
-        no = No(self.estado_inicial)
-        return no
+        no_inicial = No(self.estado_inicial)
+        return no_inicial
+
+    def aplicarJogada(self, no_pai, jogada):
+        estado_novo = no_pai.estado.copy()
+
+        if estado_novo[jogada["index"]] != "-":
+            return
+
+        estado_novo[jogada["index"]] = jogada["corPeca"]
+        
+        no_novo = No(estado_novo, no_pai, jogada)
+
+        print(self.imprimir(no_novo))
+
+        if jogada["direcao"] == "d":
+            estado_novo = self.girarDireita(estado_novo, jogada["quadrante"])
+        elif jogada["direcao"] == "e":
+            estado_novo = self.girarEsquerda(estado_novo, jogada["quadrante"])
+
+        no_novo.estado = estado_novo
+
+        return no_novo
 
     def girarDireita(self, estado, quadrante):
         estado_novo = estado.copy()
-
         try:
             q = self.selecionarQuadrante(quadrante)
         except Exception as erro:
@@ -47,7 +67,7 @@ class Pentago:
 
     def girarEsquerda(self, estado, quadrante):
         estado_novo = estado.copy()
-        
+
         try:
             q = self.selecionarQuadrante(quadrante)
         except Exception as erro:
