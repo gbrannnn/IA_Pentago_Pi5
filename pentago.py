@@ -24,11 +24,12 @@ class Pentago:
         no_inicial = No(self.estado_inicial)
         return no_inicial
 
+    def jogadaValida(self, no, jogada):
+        return no.estado[jogada["index"]] == "-"
+
+    #funcção socessora
     def aplicarJogada(self, no_pai, jogada):
         estado_novo = no_pai.estado.copy()
-
-        if estado_novo[jogada["index"]] != "-":
-            return
 
         estado_novo[jogada["index"]] = jogada["corPeca"]
         

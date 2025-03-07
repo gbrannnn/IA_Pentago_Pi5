@@ -4,52 +4,79 @@ class Partida:
     @classmethod
     @staticmethod
     def iniciarPartida(cls):
-        cls.rodadas = 2
-        cls.rodada_atual = 1
-        cls.jogadas = []
+        rodadas = 2
+        rodada_atual = 1
+        no_jogadas = []
+        historico = []
 
 
-        cls.pentago = Pentago()
-        cls.no_inicial = cls.pentago.iniciar()
-        cls.jogadas.append(cls.no_inicial)
-        print(cls.pentago.imprimir(cls.no_inicial))
+        pentago = Pentago()
+        no_inicial = pentago.iniciar()
+        no_jogadas.append(no_inicial)
+        print(pentago.imprimir(no_inicial))
 
         confirmacaoDeInstrucoes = cls.instrucoes()
 
         if confirmacaoDeInstrucoes == "n": 
             raise Exception("Não está de acordo com as intruções")
         
-
+    
         print("Partida iniciada")
         
-        while cls.rodada_atual <= cls.rodadas + 1:
-            corPeca = cls.definirCorPeçaAprtirDaRodada()
+        while rodada_atual <= rodadas + 1:
+            cor_peca = cls.definirCorPecaApartirDaRodada(rodada_atual)
             
-            jogada = cls.tratarJogada(cls.receberJogada(), corPeca)
-            
-            no_anterior = cls.jogadas.pop()
+            jogadaDados = cls.receberJogada()
 
-            no = cls.pentago.aplicarJogada(no_anterior, jogada)
-            cls.jogadas.append(no)
+            if not cls.dadosDeEntradaValidos(jogadaDados): continue
+
+            jogada = cls.tratarJogada(jogadaDados, cor_peca)
+
+            no_anterior = no_jogadas.pop()
+
+            if not pentago.jogadaValida(no_anterior, jogada):
+                print("Index selecionado não pode receber um valor!!!")
+                no_jogadas.append(no_anterior)
+                continue
+
+            no = pentago.aplicarJogada(no_anterior, jogada)
+            no_jogadas.append(no)
+            historico.append(jogada)
 
             print()
-            print(cls.pentago.imprimir(no))
-            cls.rodada_atual += 1
+            print(pentago.imprimir(no))
+            rodada_atual += 1
             
-        print(cls.jogadas)
+        print(historico)
         return
     
+
     @classmethod
     def receberJogada(cls):
         jogada = input("Digite valores a serem jogados: ")
         return jogada
 
     @classmethod
-    def tratarJogada(cls, jogada, corPeca):
+    def dadosDeEntradaValidos(cls, jogadaDados):
+        jogadaDadosArr = jogadaDados.split(",")
+        
+        qtdValoresjogada = 3
+        if len(jogadaDadosArr) != qtdValoresjogada:
+            print("Valores da jogada não atendidos, é necessario 3 valores separados por virgula, valores esses que foram passados de exemplo nas instruções")
+            return False
+
+        if int(jogadaDadosArr[0]) >= 36:
+            print("valor de Index Invalido!!, deve ser menor que 36") 
+            return False
+        
+        return True
+    
+    @classmethod
+    def tratarJogada(cls, jogada, cor_peca):
         jogadaArr = jogada.split(",")
 
         jogadaTratada = {
-            "corPeca": corPeca,
+            "corPeca": cor_peca,
             "index": None,
             "quadrante": None,
             "direcao": None
@@ -62,8 +89,8 @@ class Partida:
         return jogadaTratada
 
     @classmethod
-    def definirCorPeçaAprtirDaRodada(cls):
-        if(cls.rodada_atual % 2 == 0):
+    def definirCorPecaApartirDaRodada(cls, rodada_atual):
+        if(rodada_atual % 2 == 0):
             return "W"
         return "B"
     
