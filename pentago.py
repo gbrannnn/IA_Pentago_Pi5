@@ -3,16 +3,15 @@ from no import No
 
 class Pentago:
     def __init__(self):
-        self.estado_inicial = ["-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
+        self.estado_inicial = ["B", "-", "-", "-", "-", "-",
+                               "B", "-", "-", "-", "-", "-",
+                               "B", "-", "-", "-", "-", "-",
+                               "B", "-", "-", "-", "-", "-",
                                "-", "-", "-", "-", "-", "-",
                                "-", "-", "-", "-", "-", "-",]
         
 
-    def imprimir(self, no):
-        estado = no.estado
+    def imprimir(self, estado):
         return "|" + estado[0] + "|" + estado[1] + "|" + estado[2] + "|" + estado[3] + "|" + estado[4] + "|" + estado[5
                 ] + "|" + "\n"+ "|" + estado[6] + "|" + estado[7] + "|" + estado[8] + "|" + estado[9] + "|" + estado[10] + "|" + estado[11
                 ] + "|" + "\n" + "|" + estado[12] + "|" + estado[13] + "|" + estado[14] + "|" + estado[15] + "|" + estado[16] + "|" + estado[17
@@ -28,28 +27,27 @@ class Pentago:
         return no.estado[jogada["index"]] == "-"
 
     #funcção socessora
-    def aplicarJogada(self, no_pai, jogada):
+    def posicionarPeca(self, no_pai, jogada):
         estado_novo = no_pai.estado.copy()
 
         estado_novo[jogada["index"]] = jogada["corPeca"]
         
-        no_novo = No(estado_novo, no_pai, jogada)
+        print(self.imprimir(estado_novo))
 
-        print(self.imprimir(no_novo))
-
+        return estado_novo
+    
+    def executarGiro(self, no_pai, estado_novo, jogada):
         if jogada["direcao"] == "d":
             estado_novo = self.girarDireita(estado_novo, jogada["quadrante"])
         elif jogada["direcao"] == "e":
             estado_novo = self.girarEsquerda(estado_novo, jogada["quadrante"])
 
-        no_novo.estado = estado_novo
-
-        return no_novo
+        return No(estado_novo, no_pai, jogada)
 
     def girarDireita(self, estado, quadrante):
         estado_novo = estado.copy()
         try:
-            q = self.selecionarQuadrante(quadrante)
+            q = self.selecionarQuadranteGiro(quadrante)
         except Exception as erro:
             raise erro
 
@@ -70,7 +68,7 @@ class Pentago:
         estado_novo = estado.copy()
 
         try:
-            q = self.selecionarQuadrante(quadrante)
+            q = self.selecionarQuadranteGiro(quadrante)
         except Exception as erro:
             raise erro
 
@@ -87,7 +85,7 @@ class Pentago:
         
         return estado_novo
     
-    def selecionarQuadrante(self, quadrante):
+    def selecionarQuadranteGiro(self, quadrante):
         q = None
         match quadrante:
             case "q1":
@@ -102,3 +100,71 @@ class Pentago:
                 raise Exception("Quadrante não existente")
         return q
 
+    def verificarSequenciaPecas(self, no, index, peca):
+        estado = no.estado
+
+        quadrante = self.verificarQudranteJogada(index)
+        print(quadrante.__name__)
+
+        coordenadas_qudrante = []
+        for q in quadrante :
+            if q.name == "DOMINIO":
+                continue
+
+            range = self.sliceParaRange(q.value.start, q.value.stop, q.value.step, estado)
+            if index in range:
+                coordenadas_qudrante.append(q.name)
+        
+        match quadrante.__name__:
+            case "Quadrante_1":
+                quadrante_vizinho_1 = q2          
+                quadrante_vizinho_2 = q3
+                quadrante_vizinho_3 = q4
+            case "Quadrante_2":
+                quadrante_vizinho_1 = q1
+                quadrante_vizinho_2 = q4
+                quadrante_vizinho_3 = q3
+            case "Quadrante_3":
+                quadrante_vizinho_1 = q4
+                quadrante_vizinho_2 = q1
+                quadrante_vizinho_3 = q2
+            case "Quadrante_4":
+                quadrante_vizinho_1 = q3
+                quadrante_vizinho_2 = q2
+                quadrante_vizinho_3 = q1
+        
+        valores_cada_coordenda = []
+        for coordenada in coordenadas_qudrante:
+            print(coordenada)
+            if coordenada == "CIMA" or coordenada == "CENTRO_HORIZINTAL" or coordenada == "BAIXO":
+                valores_cada_coordenda.append(estado[quadrante[coordenada].value] + estado[quadrante_vizinho_1[coordenada].value])
+            elif coordenada == "ESQUERDA" or coordenada == "CENTRO_VERTICAL" or coordenada == "DIREITA":
+                valores_cada_coordenda.append(estado[quadrante[coordenada].value] + estado[quadrante_vizinho_2[coordenada].value])
+            elif coordenada in quadrante.__members__ and (coordenada == "DIAGONAL_DIREITA" or coordenada == "DIAGONAL_ESQUERDA"):
+                valores_cada_coordenda.append(estado[quadrante_vizinho_3[coordenada].value] + estado[quadrante[coordenada].value])
+        
+        print(valores_cada_coordenda)
+        
+        quantidades_de_pecas = []
+        for i in valores_cada_coordenda:
+            quantidades_de_pecas.append(i.count(peca))
+
+        return quantidades_de_pecas
+    
+    def sliceParaRange(self, start, stop, step, lista):
+        start = 0 if start is None else start
+        stop = len(lista) if stop is None else stop
+        step = 1 if step is None else step
+        return range(start, stop, step)
+        
+    def verificarQudranteJogada(self, index):
+        if index in q1.DOMINIO.value:
+            q = q1
+        elif index in q2.DOMINIO.value:
+            q = q2
+        elif index in q3.DOMINIO.value:
+            q = q3
+        elif index in q4.DOMINIO.value:
+            q = q4
+        
+        return q

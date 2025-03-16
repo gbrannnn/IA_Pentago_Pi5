@@ -4,20 +4,20 @@ class Partida:
     @classmethod
     @staticmethod
     def iniciarPartida(cls):
-        rodadas = 2
+        rodadas = 36
         rodada_atual = 1
         no_jogadas = []
         historico = []
 
 
-        pentago = Pentago()
-        no_inicial = pentago.iniciar()
+        cls.pentago = Pentago()
+        no_inicial = cls.pentago.iniciar()
         no_jogadas.append(no_inicial)
-        print(pentago.imprimir(no_inicial))
+        print(cls.pentago.imprimir(no_inicial.estado))
 
-        confirmacaoDeInstrucoes = cls.instrucoes()
+        confirmacao_de_instrucoes = cls.instrucoes()
 
-        if confirmacaoDeInstrucoes == "n": 
+        if confirmacao_de_instrucoes == "n": 
             raise Exception("Não está de acordo com as intruções")
         
     
@@ -26,46 +26,57 @@ class Partida:
         while rodada_atual <= rodadas + 1:
             cor_peca = cls.definirCorPecaApartirDaRodada(rodada_atual)
             
-            jogadaDados = cls.receberJogada()
+            jogada_dados = cls.receberJogada()
 
-            if not cls.dadosDeEntradaValidos(jogadaDados): continue
+            if not cls.dadosDeEntradaValidos(jogada_dados): continue
 
-            jogada = cls.tratarJogada(jogadaDados, cor_peca)
+            jogada = cls.tratarJogada(jogada_dados, cor_peca)
 
             no_anterior = no_jogadas.pop()
 
-            if not pentago.jogadaValida(no_anterior, jogada):
+            if not cls.pentago.jogadaValida(no_anterior, jogada):
                 print("Index selecionado não pode receber um valor!!!")
                 no_jogadas.append(no_anterior)
                 continue
 
-            no = pentago.aplicarJogada(no_anterior, jogada)
+            estado_novo = cls.pentago.posicionarPeca(no_anterior, jogada)
+
+            no = cls.pentago.executarGiro(no_anterior, estado_novo, jogada)
+
+            if cls.existeGanhador(no, jogada):
+                print(f"Jogador com a peca {jogada["corPeca"]} venceu!!!") 
+            # if rodada_atual >= 9:
+
             no_jogadas.append(no)
             historico.append(jogada)
 
             print()
-            print(pentago.imprimir(no))
+            print(cls.pentago.imprimir(no.estado))
             rodada_atual += 1
             
         print(historico)
         return
-    
 
+    @classmethod
+    def existeGanhador(cls, no, jogada):
+        valor_sequecia_vencedor = 5
+        return valor_sequecia_vencedor in cls.pentago.verificarSequenciaPecas(no, jogada["index"], jogada["corPeca"])
+    
     @classmethod
     def receberJogada(cls):
         jogada = input("Digite valores a serem jogados: ")
         return jogada
 
     @classmethod
-    def dadosDeEntradaValidos(cls, jogadaDados):
-        jogadaDadosArr = jogadaDados.split(",")
+    def dadosDeEntradaValidos(cls, jogada_dados):
+        jogada_dados_arr = jogada_dados.split(",")
         
-        qtdValoresjogada = 3
-        if len(jogadaDadosArr) != qtdValoresjogada:
+        qtd_valores_jogada = 3
+        if len(jogada_dados_arr) != qtd_valores_jogada:
             print("Valores da jogada não atendidos, é necessario 3 valores separados por virgula, valores esses que foram passados de exemplo nas instruções")
             return False
 
-        if int(jogadaDadosArr[0]) >= 36:
+        if int(jogada_dados_arr[0]) >= 36:
             print("valor de Index Invalido!!, deve ser menor que 36") 
             return False
         
@@ -73,25 +84,25 @@ class Partida:
     
     @classmethod
     def tratarJogada(cls, jogada, cor_peca):
-        jogadaArr = jogada.split(",")
+        jogada_arr = jogada.split(",")
 
-        jogadaTratada = {
+        jogada_tratada = {
             "corPeca": cor_peca,
             "index": None,
             "quadrante": None,
             "direcao": None
         }
 
-        jogadaTratada["index"] = int(jogadaArr[0])
-        jogadaTratada["quadrante"] = jogadaArr[1]
-        jogadaTratada["direcao"] = jogadaArr[2]
+        jogada_tratada["index"] = int(jogada_arr[0])
+        jogada_tratada["quadrante"] = jogada_arr[1]
+        jogada_tratada["direcao"] = jogada_arr[2]
 
-        return jogadaTratada
+        return jogada_tratada
 
     @classmethod
     def definirCorPecaApartirDaRodada(cls, rodada_atual):
         if(rodada_atual % 2 == 0):
-            return "W"
+            return "R"
         return "B"
     
     @classmethod
@@ -101,6 +112,6 @@ class Partida:
                 "e para onde irá girar o quadrante (exemplo d/e)"\
                 "Sendo eles separados por virgula.")
         
-        confirmacaoDeInstrucoes = input("De acordo? y/n: ")
+        confirmacao_de_instrucoes = input("De acordo? y/n: ")
 
-        return confirmacaoDeInstrucoes
+        return confirmacao_de_instrucoes
