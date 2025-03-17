@@ -1,4 +1,5 @@
 from pentago import Pentago
+from no import No
 
 class Partida:
     @classmethod
@@ -41,11 +42,21 @@ class Partida:
 
             estado_novo = cls.pentago.posicionarPeca(no_anterior, jogada)
 
+            if cls.existeGanhador(estado_novo, jogada):
+                print(f"Jogador com a peca {jogada["corPeca"]} venceu!!!")
+                no = No(estado_novo, no_anterior, jogada)
+                no_jogadas.append(no)
+                historico.append(jogada)
+
+                print()
+                print(cls.pentago.imprimir(no.estado))
+                break
+
             no = cls.pentago.executarGiro(no_anterior, estado_novo, jogada)
 
-            if cls.existeGanhador(no, jogada):
-                print(f"Jogador com a peca {jogada["corPeca"]} venceu!!!") 
-            # if rodada_atual >= 9:
+            if rodada_atual >= 9:
+                if cls.existeGanhador(no, jogada):
+                    print(f"Jogador com a peca {jogada["corPeca"]} venceu!!!") 
 
             no_jogadas.append(no)
             historico.append(jogada)
@@ -58,9 +69,9 @@ class Partida:
         return
 
     @classmethod
-    def existeGanhador(cls, no, jogada):
-        valor_sequecia_vencedor = 5
-        return valor_sequecia_vencedor in cls.pentago.verificarSequenciaPecas(no, jogada["index"], jogada["corPeca"])
+    def existeGanhador(cls, estado, jogada):
+        valor_sequecia_vencedor = 4
+        return valor_sequecia_vencedor in cls.pentago.verificarSequenciaPecas(estado, jogada["index"])
     
     @classmethod
     def receberJogada(cls):

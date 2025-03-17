@@ -3,10 +3,10 @@ from no import No
 
 class Pentago:
     def __init__(self):
-        self.estado_inicial = ["B", "-", "-", "-", "-", "-",
-                               "B", "-", "-", "-", "-", "-",
-                               "B", "-", "-", "-", "-", "-",
-                               "B", "-", "-", "-", "-", "-",
+        self.estado_inicial = ["-", "-", "-", "-", "-", "-",
+                               "-", "-", "-", "-", "-", "-",
+                               "-", "-", "-", "-", "-", "-",
+                               "-", "-", "-", "-", "-", "-",
                                "-", "-", "-", "-", "-", "-",
                                "-", "-", "-", "-", "-", "-",]
         
@@ -100,9 +100,7 @@ class Pentago:
                 raise Exception("Quadrante não existente")
         return q
 
-    def verificarSequenciaPecas(self, no, index, peca):
-        estado = no.estado
-
+    def verificarSequenciaPecas(self, estado, index):
         quadrante = self.verificarQudranteJogada(index)
         print(quadrante.__name__)
 
@@ -111,8 +109,8 @@ class Pentago:
             if q.name == "DOMINIO":
                 continue
 
-            range = self.sliceParaRange(q.value.start, q.value.stop, q.value.step, estado)
-            if index in range:
+            r = self.sliceParaRange(q.value.start, q.value.stop, q.value.step, estado)
+            if index in r:
                 coordenadas_qudrante.append(q.name)
         
         match quadrante.__name__:
@@ -137,20 +135,36 @@ class Pentago:
         for coordenada in coordenadas_qudrante:
             print(coordenada)
             if coordenada == "CIMA" or coordenada == "CENTRO_HORIZINTAL" or coordenada == "BAIXO":
-                valores_cada_coordenda.append(estado[quadrante[coordenada].value] + estado[quadrante_vizinho_1[coordenada].value])
+                arr = self.inverterArraySeDiferenteDeQ1(estado, quadrante, coordenada)
+                valores_cada_coordenda.append(arr + estado[quadrante_vizinho_1[coordenada].value])
             elif coordenada == "ESQUERDA" or coordenada == "CENTRO_VERTICAL" or coordenada == "DIREITA":
-                valores_cada_coordenda.append(estado[quadrante[coordenada].value] + estado[quadrante_vizinho_2[coordenada].value])
+                arr = self.inverterArraySeDiferenteDeQ1(estado, quadrante, coordenada)
+                valores_cada_coordenda.append(arr + estado[quadrante_vizinho_2[coordenada].value])
             elif coordenada in quadrante.__members__ and (coordenada == "DIAGONAL_DIREITA" or coordenada == "DIAGONAL_ESQUERDA"):
-                valores_cada_coordenda.append(estado[quadrante_vizinho_3[coordenada].value] + estado[quadrante[coordenada].value])
+                arr = self.inverterArraySeDiferenteDeQ1(estado, quadrante, coordenada)
+                valores_cada_coordenda.append(arr + estado[quadrante_vizinho_3[coordenada].value])
         
         print(valores_cada_coordenda)
         
         quantidades_de_pecas = []
-        for i in valores_cada_coordenda:
-            quantidades_de_pecas.append(i.count(peca))
+        for valor in valores_cada_coordenda:
+            countador_adjacente = 0
+            for i in range(len(valor) - 1):
+                if valor[i] == valor[i+1] and valor[i] != "-": countador_adjacente += 1
+            quantidades_de_pecas.append(countador_adjacente)
 
+        print(quantidades_de_pecas)
         return quantidades_de_pecas
     
+    def inverterArraySeDiferenteDeQ1(self, estado, quadrante, coordenada):
+        if quadrante == "Quadrante_1" :
+            arr = estado[quadrante[coordenada].value]
+        else:
+            arr = estado[quadrante[coordenada].value]
+            arr.reverse()
+        
+        return arr
+
     def sliceParaRange(self, start, stop, step, lista):
         start = 0 if start is None else start
         stop = len(lista) if stop is None else stop
