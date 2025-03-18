@@ -42,16 +42,17 @@ class Partida:
 
             estado_novo = cls.pentago.posicionarPeca(no_anterior, jogada)
 
-            #if rodada_atual >= 9:
-            # if cls.existeGanhador(estado_novo, jogada):
-            #     cls.finalizarPartida(no.estado, no_anterior, jogada)
-            #     break     
+            if rodada_atual >= 9:
+                if cls.existeGanhador(estado_novo, jogada):
+                    cls.finalizarPartida(estado_novo, no_anterior, jogada)
+                    break     
 
             no = cls.pentago.executarGiro(no_anterior, estado_novo, jogada)
 
-            if cls.existeGanhador(no.estado, jogada, True):
-                cls.finalizarPartida(no.estado, no_anterior, jogada)
-                break 
+            if rodada_atual >= 9:
+                if cls.existeGanhador(no.estado, jogada, True):
+                    cls.finalizarPartida(no.estado, no_anterior, jogada)
+                    break 
 
             cls.no_jogadas.append(no)
             cls.historico.append(jogada)
