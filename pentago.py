@@ -3,12 +3,12 @@ from no import No
 
 class Pentago:
     def __init__(self):
-        self.estado_inicial = ["-", "-", "-", "-", "-", "-",
+        self.estado_inicial = ["W", "W", "W", "-", "-", "W",
+                               "-", "-", "-", "-", "B", "W",
                                "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",]
+                               "-", "-", "B", "-", "-", "-",
+                               "-", "B", "-", "-", "-", "-",
+                               "B", "-", "-", "-", "-", "-",]
         
 
     def imprimir(self, estado):
@@ -100,19 +100,70 @@ class Pentago:
                 raise Exception("Quadrante não existente")
         return q
 
-    def verificarSequenciaPecas(self, estado, index):
+    def verificarSequenciaPecas(self, estado, index, quadrante_giro=None):
         quadrante = self.verificarQudranteJogada(index)
         print(quadrante.__name__)
 
-        coordenadas_qudrante = []
+        if quadrante_giro == None:
+            coordenadas_quadrante = self.pegarDoQuadranteCoordenadasAprtirDoIndex(estado, quadrante, index)
+        else:
+            coordenadas_quadrante = self.pegarCoordenadasQuadrante(quadrante) 
+
+        valores_cada_coordenda = self.concatenarCoordenadasQuadrante(estado, quadrante, coordenadas_quadrante)
+        
+        outrasDiagonais = 4
+        indexInicioOutraDiagonais = [1, 4, 6, 11]
+        indexFinalOutraDiagonais = [29, 24, 34, 31]
+        for i in range(outrasDiagonais):
+            step = 7 if i % 2 == 0 else 5
+            valores_cada_coordenda.append(estado[slice(indexInicioOutraDiagonais[i], indexFinalOutraDiagonais[i] + 1, step)])
+
+        if quadrante_giro != None:
+            diagonal_principal_direita = estado[slice(0,None,7)]
+            diagonal_principal_esquerda = estado[slice(5,31,5)]
+            valores_cada_coordenda.append(diagonal_principal_direita)
+            valores_cada_coordenda.append(diagonal_principal_esquerda)
+    
+        print(valores_cada_coordenda)
+        
+        quantidades_de_pecas_B = []
+        quantidades_de_pecas_W = []
+        for valor in valores_cada_coordenda:
+            countador_B_adjacente = 0
+            countador_W_adjacente = 0
+            for i in range(len(valor) - 1):
+                if valor[i] == valor[i+1] and valor[i] == "B":
+                    countador_B_adjacente += 1
+                elif valor[i] == valor[i+1] and valor[i] == "W":
+                    countador_W_adjacente += 1
+            quantidades_de_pecas_B.append(countador_B_adjacente)
+            quantidades_de_pecas_W.append(countador_W_adjacente)
+
+        quantidades_de_pecas = {"B": quantidades_de_pecas_B, "W": quantidades_de_pecas_W}
+
+        print(quantidades_de_pecas)
+        return quantidades_de_pecas
+    
+    def pegarDoQuadranteCoordenadasAprtirDoIndex(self, estado, quadrante, index):
+        coordenadas_quadrante = []
         for q in quadrante :
             if q.name == "DOMINIO":
                 continue
 
             r = self.sliceParaRange(q.value.start, q.value.stop, q.value.step, estado)
             if index in r:
-                coordenadas_qudrante.append(q.name)
-        
+                coordenadas_quadrante.append(q.name)
+        return coordenadas_quadrante
+
+    def pegarCoordenadasQuadrante(self, quadrante):
+        coordenadas_quadrante = []
+        for q in quadrante :
+            if q.name == "DOMINIO":
+                continue
+            coordenadas_quadrante.append(q.name)
+        return coordenadas_quadrante
+
+    def concatenarCoordenadasQuadrante(self, estado, quadrante, coordenadas_qudrante):
         match quadrante.__name__:
             case "Quadrante_1":
                 quadrante_vizinho_1 = q2          
@@ -130,36 +181,33 @@ class Pentago:
                 quadrante_vizinho_1 = q3
                 quadrante_vizinho_2 = q2
                 quadrante_vizinho_3 = q1
-        
+
         valores_cada_coordenda = []
         for coordenada in coordenadas_qudrante:
             print(coordenada)
-            if coordenada == "CIMA" or coordenada == "CENTRO_HORIZINTAL" or coordenada == "BAIXO":
-                arr = self.inverterArraySeDiferenteDeQ1(estado, quadrante, coordenada)
+            if coordenada in ("CIMA", "CENTRO_HORIZONTAL", "BAIXO"):
+                arr = self.inverterArray(estado, quadrante, coordenada)
                 valores_cada_coordenda.append(arr + estado[quadrante_vizinho_1[coordenada].value])
-            elif coordenada == "ESQUERDA" or coordenada == "CENTRO_VERTICAL" or coordenada == "DIREITA":
-                arr = self.inverterArraySeDiferenteDeQ1(estado, quadrante, coordenada)
+            elif coordenada in ("ESQUERDA", "CENTRO_VERTICAL", "DIREITA"):
+                arr = self.inverterArray(estado, quadrante, coordenada)
                 valores_cada_coordenda.append(arr + estado[quadrante_vizinho_2[coordenada].value])
-            elif coordenada in quadrante.__members__ and (coordenada == "DIAGONAL_DIREITA" or coordenada == "DIAGONAL_ESQUERDA"):
-                arr = self.inverterArraySeDiferenteDeQ1(estado, quadrante, coordenada)
+            elif coordenada in quadrante.__members__ and (coordenada in ("DIAGONAL_DIREITA", "DIAGONAL_ESQUERDA")):
+                arr = self.inverterArray(estado, quadrante, coordenada)
                 valores_cada_coordenda.append(arr + estado[quadrante_vizinho_3[coordenada].value])
         
-        print(valores_cada_coordenda)
-        
-        quantidades_de_pecas = []
-        for valor in valores_cada_coordenda:
-            countador_adjacente = 0
-            for i in range(len(valor) - 1):
-                if valor[i] == valor[i+1] and valor[i] != "-": countador_adjacente += 1
-            quantidades_de_pecas.append(countador_adjacente)
+        return valores_cada_coordenda
 
-        print(quantidades_de_pecas)
-        return quantidades_de_pecas
-    
-    def inverterArraySeDiferenteDeQ1(self, estado, quadrante, coordenada):
-        if quadrante == "Quadrante_1" :
+    def inverterArray(self, estado, quadrante, coordenada):
+        arr = estado[quadrante[coordenada].value]
+        if quadrante.__name__ == "Quadrante_1" :
             arr = estado[quadrante[coordenada].value]
-        else:
+        elif quadrante.__name__ == "Quadrante_2" and coordenada in ("CIMA", "CENTRO_HORIZONTAL", "BAIXO"):
+            arr = estado[quadrante[coordenada].value]
+            arr.reverse()
+        elif quadrante.__name__ == "Quadrante_3" and coordenada in ("ESQUERDA", "CENTRO_VERTICAL", "DIREITA", "DIAGONAL_ESQUERDA"):
+            arr = estado[quadrante[coordenada].value]
+            arr.reverse()
+        elif quadrante.__name__ == "Quadrante_4":
             arr = estado[quadrante[coordenada].value]
             arr.reverse()
         

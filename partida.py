@@ -7,13 +7,13 @@ class Partida:
     def iniciarPartida(cls):
         rodadas = 36
         rodada_atual = 1
-        no_jogadas = []
-        historico = []
+        cls.no_jogadas = []
+        cls.historico = []
 
 
         cls.pentago = Pentago()
         no_inicial = cls.pentago.iniciar()
-        no_jogadas.append(no_inicial)
+        cls.no_jogadas.append(no_inicial)
         print(cls.pentago.imprimir(no_inicial.estado))
 
         confirmacao_de_instrucoes = cls.instrucoes()
@@ -33,45 +33,68 @@ class Partida:
 
             jogada = cls.tratarJogada(jogada_dados, cor_peca)
 
-            no_anterior = no_jogadas.pop()
+            no_anterior = cls.no_jogadas.pop()
 
             if not cls.pentago.jogadaValida(no_anterior, jogada):
                 print("Index selecionado não pode receber um valor!!!")
-                no_jogadas.append(no_anterior)
+                cls.no_jogadas.append(no_anterior)
                 continue
 
             estado_novo = cls.pentago.posicionarPeca(no_anterior, jogada)
 
-            if cls.existeGanhador(estado_novo, jogada):
-                print(f"Jogador com a peca {jogada["corPeca"]} venceu!!!")
-                no = No(estado_novo, no_anterior, jogada)
-                no_jogadas.append(no)
-                historico.append(jogada)
-
-                print()
-                print(cls.pentago.imprimir(no.estado))
-                break
+            #if rodada_atual >= 9:
+            # if cls.existeGanhador(estado_novo, jogada):
+            #     cls.finalizarPartida(no.estado, no_anterior, jogada)
+            #     break     
 
             no = cls.pentago.executarGiro(no_anterior, estado_novo, jogada)
 
-            if rodada_atual >= 9:
-                if cls.existeGanhador(no, jogada):
-                    print(f"Jogador com a peca {jogada["corPeca"]} venceu!!!") 
+            if cls.existeGanhador(no.estado, jogada, True):
+                cls.finalizarPartida(no.estado, no_anterior, jogada)
+                break 
 
-            no_jogadas.append(no)
-            historico.append(jogada)
+            cls.no_jogadas.append(no)
+            cls.historico.append(jogada)
 
             print()
             print(cls.pentago.imprimir(no.estado))
             rodada_atual += 1
-            
-        print(historico)
+        
+        print(cls.historico)
         return
 
     @classmethod
-    def existeGanhador(cls, estado, jogada):
+    def existeGanhador(cls, estado, jogada, isDepoisDoGiro=False):
+        if isDepoisDoGiro:
+            quantidades_de_pecas = cls.pentago.verificarSequenciaPecas(estado, jogada["index"], jogada["quadrante"])
+        else:
+            quantidades_de_pecas = cls.pentago.verificarSequenciaPecas(estado, jogada["index"])
+                                                                
         valor_sequecia_vencedor = 4
-        return valor_sequecia_vencedor in cls.pentago.verificarSequenciaPecas(estado, jogada["index"])
+        if valor_sequecia_vencedor in quantidades_de_pecas["B"] and valor_sequecia_vencedor in quantidades_de_pecas["W"]:
+            print("Empate!!! As duas peças possuem 5 em seqência")
+            return True
+        elif valor_sequecia_vencedor in quantidades_de_pecas["B"]:
+            print("Jogador com a peca B venceu!!!")
+            return True
+        elif valor_sequecia_vencedor in quantidades_de_pecas["W"]:
+            print("Jogador com a peca W venceu!!!")
+            return True
+        
+        return False
+
+
+    @classmethod
+    def finalizarPartida(cls, estado, no_anterior, jogada):
+        no = No(estado, no_anterior, jogada)
+        cls.no_jogadas.append(no)
+        cls.historico.append(jogada)
+
+        print()
+        print(cls.pentago.imprimir(no.estado))
+        print()
+        print("Jogo Finalizado!!")
+        return
     
     @classmethod
     def receberJogada(cls):
@@ -113,7 +136,7 @@ class Partida:
     @classmethod
     def definirCorPecaApartirDaRodada(cls, rodada_atual):
         if(rodada_atual % 2 == 0):
-            return "R"
+            return "W"
         return "B"
     
     @classmethod

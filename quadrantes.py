@@ -9,7 +9,7 @@ class Quadrante_1(Enum):
     DIAGONAL_DIREITA = slice(None,15,7)
     #DIAGONAL_ESQUERDA = slice(2,13,5)
     CENTRO_VERTICAL = slice(1,14,6)
-    CENTRO_HORIZINTAL = slice(6,9,None)
+    CENTRO_HORIZONTAL = slice(6,9,None)
 
 class Quadrante_2(Enum):
     DOMINIO = [3,4,5,9,10,11,15,16,17]
@@ -20,7 +20,7 @@ class Quadrante_2(Enum):
     #DIAGONAL_DIREITA = slice(3,18,7)
     DIAGONAL_ESQUERDA = slice(5,16,5)
     CENTRO_VERTICAL = slice(4,17,6)
-    CENTRO_HORIZINTAL = slice(9,12,None)
+    CENTRO_HORIZONTAL = slice(9,12,None)
 
 class Quadrante_3(Enum):
     DOMINIO = [18,19,20,24,25,26,30,31,32]
@@ -31,7 +31,7 @@ class Quadrante_3(Enum):
     #DIAGONAL_DIREITA = slice(18,33,7)
     DIAGONAL_ESQUERDA = slice(20,31,5)
     CENTRO_VERTICAL = slice(19,32,6)
-    CENTRO_HORIZINTAL = slice(24,27,None)
+    CENTRO_HORIZONTAL = slice(24,27,None)
 
 class Quadrante_4(Enum):
     DOMINIO = [21,22,23,27,28,29,33,34,35]
@@ -42,4 +42,4 @@ class Quadrante_4(Enum):
     DIAGONAL_DIREITA = slice(21,None,7)
     #DIAGONAL_ESQUERDA = slice(23,34,5)
     CENTRO_VERTICAL = slice(22,35,6)
-    CENTRO_HORIZINTAL = slice(27,30,None)
+    CENTRO_HORIZONTAL = slice(27,30,None)
