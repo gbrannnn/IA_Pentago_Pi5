@@ -14,7 +14,7 @@ class Partida:
         cls.pentago = Pentago()
         no_inicial = cls.pentago.iniciar()
         cls.no_jogadas.append(no_inicial)
-        print(cls.pentago.imprimir(no_inicial.estado))
+        print(cls.pentago.imprimir(no_inicial.estado_antes_giro))
 
         confirmacao_de_instrucoes = cls.instrucoes()
 
@@ -35,30 +35,30 @@ class Partida:
 
             no_anterior = cls.no_jogadas.pop()
 
-            if not cls.pentago.jogadaValida(no_anterior, jogada):
+            if not cls.pentago.jogadaValida(no_anterior.estado_antes_giro, jogada):
                 print("Index selecionado não pode receber um valor!!!")
                 cls.no_jogadas.append(no_anterior)
                 continue
 
-            estado_novo = cls.pentago.posicionarPeca(no_anterior, jogada)
+            no_novo = cls.pentago.posicionarPeca(no_anterior, jogada)
 
             if rodada_atual >= 9:
-                if cls.existeGanhador(estado_novo, jogada):
-                    cls.finalizarPartida(estado_novo, no_anterior, jogada)
+                if cls.existeGanhador(no_novo.estado_antes_giro, jogada):
+                    cls.finalizarPartida(no_novo.estado_antes_giro, no_anterior, jogada)
                     break     
 
-            no = cls.pentago.executarGiro(no_anterior, estado_novo, jogada)
+            no_novo.estado_apos_giro = cls.pentago.executarGiro(no_novo.estado_antes_giro, jogada)
 
             if rodada_atual >= 9:
-                if cls.existeGanhador(no.estado, jogada, True):
-                    cls.finalizarPartida(no.estado, no_anterior, jogada)
+                if cls.existeGanhador(no_novo.estado_apos_giro, jogada, True):
+                    cls.finalizarPartida(no_novo.estado_apos_giro, no_anterior, jogada)
                     break 
 
-            cls.no_jogadas.append(no)
+            cls.no_jogadas.append(no_novo)
             cls.historico.append(jogada)
 
             print()
-            print(cls.pentago.imprimir(no.estado))
+            print(cls.pentago.imprimir(no_novo.estado_apos_giro))
             rodada_atual += 1
         
         print(cls.historico)

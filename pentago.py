@@ -23,26 +23,26 @@ class Pentago:
         no_inicial = No(self.estado_inicial)
         return no_inicial
 
-    def jogadaValida(self, no, jogada):
-        return no.estado[jogada["index"]] == "-"
+    def jogadaValida(self, estado, jogada):
+        return estado[jogada["index"]] == "-"
 
     #funcção socessora
     def posicionarPeca(self, no_pai, jogada):
-        estado_novo = no_pai.estado.copy()
+        estado_novo = no_pai.estado_antes_giro.copy()
 
         estado_novo[jogada["index"]] = jogada["corPeca"]
         
         print(self.imprimir(estado_novo))
-
-        return estado_novo
+        no_novo = No(estado_novo, no_pai)
+        return no_novo
     
-    def executarGiro(self, no_pai, estado_novo, jogada):
+    def executarGiro(self, estado_novo, jogada):
         if jogada["direcao"] == "d":
             estado_novo = self.girarDireita(estado_novo, jogada["quadrante"])
         elif jogada["direcao"] == "e":
             estado_novo = self.girarEsquerda(estado_novo, jogada["quadrante"])
 
-        return No(estado_novo, no_pai, jogada)
+        return estado_novo
 
     def girarDireita(self, estado, quadrante):
         estado_novo = estado.copy()
