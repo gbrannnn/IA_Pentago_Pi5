@@ -32,10 +32,12 @@ class Partida:
             if not cls.dadosDeEntradaValidos(jogada_dados): continue
 
             jogada = cls.tratarJogada(jogada_dados, cor_peca)
-
+            
             no_anterior = cls.no_jogadas.pop()
 
-            if not cls.pentago.jogadaValida(no_anterior.estado_antes_giro, jogada):
+            estado_anterior = no_anterior.estado_apos_giro if rodada_atual != 1 else no_anterior.estado_antes_giro
+
+            if not cls.pentago.jogos_validos(estado_anterior, jogada):
                 print("Index selecionado não pode receber um valor!!!")
                 cls.no_jogadas.append(no_anterior)
                 continue
@@ -43,14 +45,14 @@ class Partida:
             no_novo = cls.pentago.posicionarPeca(no_anterior, jogada)
 
             if rodada_atual >= 9:
-                if cls.existeGanhador(no_novo.estado_antes_giro, jogada):
+                if cls.existeGanhador(no_novo.estado_antes_giro, jogada) or cls.existeEmpate():
                     cls.finalizarPartida(no_novo.estado_antes_giro, no_anterior, jogada)
                     break     
 
             no_novo.estado_apos_giro = cls.pentago.executarGiro(no_novo.estado_antes_giro, jogada)
 
             if rodada_atual >= 9:
-                if cls.existeGanhador(no_novo.estado_apos_giro, jogada, True):
+                if cls.existeGanhador(no_novo.estado_apos_giro, jogada, True) or cls.existeEmpate():
                     cls.finalizarPartida(no_novo.estado_apos_giro, no_anterior, jogada)
                     break 
 
@@ -70,19 +72,39 @@ class Partida:
             quantidades_de_pecas = cls.pentago.verificarSequenciaPecas(estado, jogada["index"], jogada["quadrante"])
         else:
             quantidades_de_pecas = cls.pentago.verificarSequenciaPecas(estado, jogada["index"])
-                                                                
+                                                                    
         valor_sequecia_vencedor = 4
-        if valor_sequecia_vencedor in quantidades_de_pecas["B"] and valor_sequecia_vencedor in quantidades_de_pecas["W"]:
-            print("Empate!!! As duas peças possuem 5 em seqência")
-            return True
-        elif valor_sequecia_vencedor in quantidades_de_pecas["B"]:
+        existeGanhador = False
+        if valor_sequecia_vencedor in quantidades_de_pecas["B"]:
             print("Jogador com a peca B venceu!!!")
-            return True
+            existeGanhador = True
         elif valor_sequecia_vencedor in quantidades_de_pecas["W"]:
             print("Jogador com a peca W venceu!!!")
-            return True
-        
-        return False
+            existeGanhador = True
+        else:
+            existeGanhador = False
+
+        cls.pentago.venceu(existeGanhador)
+
+        return existeGanhador
+
+    def existeEmpate(cls, estado, jogada, isDepoisDoGiro=False):
+        if isDepoisDoGiro:
+            quantidades_de_pecas = cls.pentago.verificarSequenciaPecas(estado, jogada["index"], jogada["quadrante"])
+        else:
+            quantidades_de_pecas = cls.pentago.verificarSequenciaPecas(estado, jogada["index"])
+
+        valor_sequecia_vencedor = 4
+        existeEmpate = False
+        if valor_sequecia_vencedor in quantidades_de_pecas["B"] and valor_sequecia_vencedor in quantidades_de_pecas["W"]:
+            print("Empate!!! As duas peças possuem 5 em seqência")
+            existeEmpate = True
+        else:
+            existeEmpate = False
+
+        cls.pentago.empate(existeEmpate)
+
+        return existeEmpate
 
 
     @classmethod

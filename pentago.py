@@ -1,16 +1,12 @@
 from quadrantes import Quadrante_1 as q1, Quadrante_2 as q2, Quadrante_3 as q3, Quadrante_4 as q4
 from no import No
 
-class Pentago:
-    def __init__(self):
-        self.estado_inicial = ["-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",]
-        
+from jogo import Jogo, Jogador
 
+class Pentago(Jogo):
+    def __init__(self):
+        self.estado_inicial = ["-"] * 36
+        
     def imprimir(self, estado):
         return "|" + estado[0] + "|" + estado[1] + "|" + estado[2] + "|" + estado[3] + "|" + estado[4] + "|" + estado[5
                 ] + "|" + "\n"+ "|" + estado[6] + "|" + estado[7] + "|" + estado[8] + "|" + estado[9] + "|" + estado[10] + "|" + estado[11
@@ -23,12 +19,18 @@ class Pentago:
         no_inicial = No(self.estado_inicial)
         return no_inicial
 
-    def jogadaValida(self, estado, jogada):
+    def jogos_validos(self, estado, jogada):
         return estado[jogada["index"]] == "-"
+
+    def venceu(self, venceu):
+        return venceu
+    
+    def empate(self, empate):
+        return empate
 
     #funcção socessora
     def posicionarPeca(self, no_pai, jogada):
-        estado_novo = no_pai.estado_antes_giro.copy()
+        estado_novo = no_pai.estado_antes_giro.copy() if no_pai.estado_apos_giro == None else no_pai.estado_apos_giro.copy()
 
         estado_novo[jogada["index"]] = jogada["corPeca"]
         
