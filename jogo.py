@@ -1,23 +1,25 @@
-class Jogador:
-    def oposto(self):
-        raise NotImplementedError("Deve ser implementado")
+from jogador import Jogador    
 
-class Jogo():
+class Jogo(Jogador):   
     def turno(self):
-        pass
-
+        raise NotImplementedError("Deve ser implementado")
+    
     def jogar(self, localizacao):
-        pass
-
+        raise NotImplementedError("Deve ser implementado")
+    
     def jogos_validos(self):
-        pass
-
+        raise NotImplementedError("Deve ser implementado")
+    
     def venceu(self):
-        pass
-
+        raise NotImplementedError("Deve ser implementado")
+    
     def empate(self):
-        return (not self.venceu()) and (len(self.jogos_validos()) == 0)
-
+        raise NotImplementedError("Deve ser implementado")
+    
     def avaliar(self, player):
-        pass
+        raise NotImplementedError("Deve ser implementado")
+    
+    def inicializarJogadores(self):
+        raise NotImplementedError("Deve ser implementado")
+    
 

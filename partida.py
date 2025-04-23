@@ -1,169 +1,129 @@
 from pentago import Pentago
 from no import No
 
-class Partida:
-    @classmethod
-    @staticmethod
-    def iniciarPartida(cls):
-        rodadas = 36
-        rodada_atual = 1
-        cls.no_jogadas = []
-        cls.historico = []
+from jogador import JogadorHumano, JogadorAgente
+from jogo import Jogo
 
+import random
 
-        cls.pentago = Pentago()
-        no_inicial = cls.pentago.iniciar()
-        cls.no_jogadas.append(no_inicial)
-        print(cls.pentago.imprimir(no_inicial.estado_antes_giro))
-
-        confirmacao_de_instrucoes = cls.instrucoes()
-
-        if confirmacao_de_instrucoes == "n": 
-            raise Exception("Não está de acordo com as intruções")
-        
+class Partida(Jogo):
+    def __init__(self):
+        self.no_jogadas = []
+        self.historico = []
+        self.pentago = Pentago(["-"]*36)
+        no_inicial = self.pentago.iniciar()
+        self.no_jogadas.append(no_inicial)        
+        print(self.pentago.imprimir(no_inicial.estado_antes_giro))
+        self.jogador_turno = None
     
-        print("Partida iniciada")
+    def inicializarJogadores(self):
+        (humano, agente) = (JogadorHumano("B"), JogadorAgente("W"))
+        humano.define_proximo_turno(agente)
+        agente.define_proximo_turno(humano)
         
-        while rodada_atual <= rodadas + 1:
-            cor_peca = cls.definirCorPecaApartirDaRodada(rodada_atual)
-            
-            jogada_dados = cls.receberJogada()
+        self.jogadores = (humano, agente)
 
-            if not cls.dadosDeEntradaValidos(jogada_dados): continue
-
-            jogada = cls.tratarJogada(jogada_dados, cor_peca)
-            
-            no_anterior = cls.no_jogadas.pop()
-
-            estado_anterior = no_anterior.estado_apos_giro if rodada_atual != 1 else no_anterior.estado_antes_giro
-
-            if not cls.pentago.jogos_validos(estado_anterior, jogada):
-                print("Index selecionado não pode receber um valor!!!")
-                cls.no_jogadas.append(no_anterior)
-                continue
-
-            no_novo = cls.pentago.posicionarPeca(no_anterior, jogada)
-
-            if rodada_atual >= 9:
-                if cls.existeGanhador(no_novo.estado_antes_giro, jogada) or cls.existeEmpate():
-                    cls.finalizarPartida(no_novo.estado_antes_giro, no_anterior, jogada)
-                    break     
-
-            no_novo.estado_apos_giro = cls.pentago.executarGiro(no_novo.estado_antes_giro, jogada)
-
-            if rodada_atual >= 9:
-                if cls.existeGanhador(no_novo.estado_apos_giro, jogada, True) or cls.existeEmpate():
-                    cls.finalizarPartida(no_novo.estado_apos_giro, no_anterior, jogada)
-                    break 
-
-            cls.no_jogadas.append(no_novo)
-            cls.historico.append(jogada)
-
-            print()
-            print(cls.pentago.imprimir(no_novo.estado_apos_giro))
-            rodada_atual += 1
-        
-        print(cls.historico)
-        return
-
-    @classmethod
-    def existeGanhador(cls, estado, jogada, isDepoisDoGiro=False):
-        if isDepoisDoGiro:
-            quantidades_de_pecas = cls.pentago.verificarSequenciaPecas(estado, jogada["index"], jogada["quadrante"])
-        else:
-            quantidades_de_pecas = cls.pentago.verificarSequenciaPecas(estado, jogada["index"])
-                                                                    
-        valor_sequecia_vencedor = 4
-        existeGanhador = False
-        if valor_sequecia_vencedor in quantidades_de_pecas["B"]:
-            print("Jogador com a peca B venceu!!!")
-            existeGanhador = True
-        elif valor_sequecia_vencedor in quantidades_de_pecas["W"]:
-            print("Jogador com a peca W venceu!!!")
-            existeGanhador = True
-        else:
-            existeGanhador = False
-
-        cls.pentago.venceu(existeGanhador)
-
-        return existeGanhador
-
-    def existeEmpate(cls, estado, jogada, isDepoisDoGiro=False):
-        if isDepoisDoGiro:
-            quantidades_de_pecas = cls.pentago.verificarSequenciaPecas(estado, jogada["index"], jogada["quadrante"])
-        else:
-            quantidades_de_pecas = cls.pentago.verificarSequenciaPecas(estado, jogada["index"])
-
-        valor_sequecia_vencedor = 4
-        existeEmpate = False
-        if valor_sequecia_vencedor in quantidades_de_pecas["B"] and valor_sequecia_vencedor in quantidades_de_pecas["W"]:
-            print("Empate!!! As duas peças possuem 5 em seqência")
-            existeEmpate = True
-        else:
-            existeEmpate = False
-
-        cls.pentago.empate(existeEmpate)
-
-        return existeEmpate
-
-
-    @classmethod
-    def finalizarPartida(cls, estado, no_anterior, jogada):
-        no = No(estado, no_anterior, jogada)
-        cls.no_jogadas.append(no)
-        cls.historico.append(jogada)
-
-        print()
-        print(cls.pentago.imprimir(no.estado))
-        print()
-        print("Jogo Finalizado!!")
-        return
+        return self.jogadores
     
-    @classmethod
-    def receberJogada(cls):
-        jogada = input("Digite valores a serem jogados: ")
-        return jogada
-
-    @classmethod
-    def dadosDeEntradaValidos(cls, jogada_dados):
-        jogada_dados_arr = jogada_dados.split(",")
-        
-        qtd_valores_jogada = 3
-        if len(jogada_dados_arr) != qtd_valores_jogada:
-            print("Valores da jogada não atendidos, é necessario 3 valores separados por virgula, valores esses que foram passados de exemplo nas instruções")
-            return False
-
-        if int(jogada_dados_arr[0]) >= 36:
-            print("valor de Index Invalido!!, deve ser menor que 36") 
-            return False
-        
-        return True
-    
-    @classmethod
-    def tratarJogada(cls, jogada, cor_peca):
-        jogada_arr = jogada.split(",")
-
-        jogada_tratada = {
-            "corPeca": cor_peca,
+    def jogos_validos(self):
+        jogada = {
+            "corPeca": self.turno().identificador,
             "index": None,
             "quadrante": None,
             "direcao": None
         }
 
-        jogada_tratada["index"] = int(jogada_arr[0])
-        jogada_tratada["quadrante"] = jogada_arr[1]
-        jogada_tratada["direcao"] = jogada_arr[2]
+        estado = self.pentago.estado
 
-        return jogada_tratada
+        jogadas = []
+        for i in range(len(estado)):
+            jogada["index"] = i
+            jogada["quadrante"] = random.choice(["q1", "q2", "q3", "q4"]) 
+            jogada["direcao"] = random.choice(["d", "e"])
+            if self.pentago.jogadaValida(estado, jogada):
+                jogadas.append(jogada.copy())
 
-    @classmethod
-    def definirCorPecaApartirDaRodada(cls, rodada_atual):
-        if(rodada_atual % 2 == 0):
-            return "W"
-        return "B"
+        return jogadas
+
     
-    @classmethod
-    def instrucoes(cls):
+    def jogar(self, jogada):
+        no_novo = self.pentago.posicionarPeca(self.no_anterior, jogada)
+
+        no_novo.estado_apos_giro = self.pentago.executarGiro(no_novo.estado_antes_giro, jogada)
+
+        self.pentago = Pentago(no_novo.estado_apos_giro, no_novo)
+
+        self.jogador_turno = self.trocarTurno()
+
+        return self
+    
+    def trocarTurno(self):
+        if self.jogador_turno is self.jogadores[0]:
+            return self.jogadores[1] # agente
+        elif self.jogador_turno is self.jogadores[1]:
+            return self.jogadores[0] # humano
+        
+        return
+
+    def calcular_utilidade(self, jogador):
+        estado = self.pentago.estado
+        jogada = self.historico[-1]
+
+        quantidades_de_pecas = self.pentago.verificarSequenciaPecas(estado, jogada["index"], jogada["quadrante"])
+
+        if quantidades_de_pecas[jogador.identificador] == 2:
+            return 0.4 if jogador.min_max == "max" else -0.4
+        elif quantidades_de_pecas[jogador.identificador] == 3:
+            return 0.6 if jogador.min_max == "max" else -0.6
+        elif quantidades_de_pecas[jogador.identificador] == 4:
+            return 0.8 if jogador.min_max == "max" else -0.8
+        elif quantidades_de_pecas[jogador.identificador] == 5 or self.venceu():
+            return 1 if jogador.min_max == "max" else -1
+
+        return 0.2
+    
+    def turno(self):
+        return self.jogador_turno
+
+    def venceu(self):
+        estado = self.pentago.estado
+        jogada = self.historico[-1]
+
+        quantidades_de_pecas = self.pentago.verificarSequenciaPecas(estado, jogada["index"], jogada["quadrante"])
+                                                                    
+        valor_sequecia_vencedor = 5
+        if any(valor >= valor_sequecia_vencedor for valor in quantidades_de_pecas["B"]):
+            print("Jogador com a peca B venceu!!!")
+            return True
+        elif any(valor >= valor_sequecia_vencedor for valor in quantidades_de_pecas["W"]):
+            print("Jogador com a peca W venceu!!!")
+            return True
+
+        return False
+
+    def empate(self):
+        estado = self.pentago.estado
+        jogada = self.historico[-1]
+        
+        quantidades_de_pecas = self.pentago.verificarSequenciaPecas(estado, jogada["index"], jogada["quadrante"])
+        
+        valor_sequecia_vencedor = 5
+        if any(valor >= valor_sequecia_vencedor for valor in quantidades_de_pecas["B"]) and any(valor >= valor_sequecia_vencedor for valor in quantidades_de_pecas["W"]):
+            print("Empate!!! As duas peças possuem 5 em seqência")
+            return True
+
+        return False
+    
+    def finalizarPartida(self, no_novo, no_anterior, jogada):
+        no = No(no_novo.estado_antes_giro, no_novo.estado_apos_giro, no_anterior, jogada)
+        self.no_jogadas.append(no)
+        self.historico.append(jogada)
+
+        print("Partida Finalizado!!")
+        return    
+    
+    
+    def instrucoes(self):
         print("Para que possa jogar o Pentago sera necessario realizar um input de duas informações por rodada,\n" \
                 "essas que seriam um valor/index de onde ira jogar e o quadrante/qn (sendo n valor do quadrante que irá girar, exemplo q1)," \
                 "e para onde irá girar o quadrante (exemplo d/e)"\
