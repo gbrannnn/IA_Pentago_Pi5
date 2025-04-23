@@ -6,7 +6,7 @@ class No:
     self.aresta = aresta
 
   def __repr__(self):
-    return str(self.estado)
+    return str([self.estado_antes_giro, self.estado_apos_giro])
 
   def __lt__(self, outro):
     return (self.custo + self.heuristica) < (outro.custo + outro.heuristica)

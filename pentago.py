@@ -1,15 +1,11 @@
 from quadrantes import Quadrante_1 as q1, Quadrante_2 as q2, Quadrante_3 as q3, Quadrante_4 as q4
 from no import No
 
-class Pentago:
-    def __init__(self):
-        self.estado_inicial = ["-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",
-                               "-", "-", "-", "-", "-", "-",]
-        
+
+class Pentago():
+    def __init__(self, estado, no=None):
+        self.estado = estado
+        self.no = no
 
     def imprimir(self, estado):
         return "|" + estado[0] + "|" + estado[1] + "|" + estado[2] + "|" + estado[3] + "|" + estado[4] + "|" + estado[5
@@ -20,15 +16,15 @@ class Pentago:
                 ] + "|" + "\n" + "|" + estado[30] + "|" + estado[31] + "|" + estado[32] + "|" + estado[33] + "|" + estado[34] + "|" + estado[35] + "|"                                                                                                                                                                                                                                                                                                                                       
     
     def iniciar(self):
-        no_inicial = No(self.estado_inicial)
-        return no_inicial
+        self.no = No(self.estado)
+        return self.no
 
-    def jogadaValida(self, estado, jogada):
+    def jogadaValida(cls, estado, jogada):
         return estado[jogada["index"]] == "-"
 
     #funcção socessora
     def posicionarPeca(self, no_pai, jogada):
-        estado_novo = no_pai.estado_antes_giro.copy()
+        estado_novo = no_pai.estado_antes_giro.copy() if no_pai.estado_apos_giro == None else no_pai.estado_apos_giro.copy()
 
         estado_novo[jogada["index"]] = jogada["corPeca"]
         
@@ -133,9 +129,9 @@ class Pentago:
             countador_W_adjacente = 0
             for i in range(len(valor) - 1):
                 if valor[i] == valor[i+1] and valor[i] == "B":
-                    countador_B_adjacente += 1
+                    countador_B_adjacente += 1 if countador_B_adjacente !=0 else 2
                 elif valor[i] == valor[i+1] and valor[i] == "W":
-                    countador_W_adjacente += 1
+                    countador_W_adjacente += 1 if countador_W_adjacente !=0 else 2
             quantidades_de_pecas_B.append(countador_B_adjacente)
             quantidades_de_pecas_W.append(countador_W_adjacente)
 
