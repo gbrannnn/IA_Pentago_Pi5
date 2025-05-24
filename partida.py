@@ -11,6 +11,12 @@ class Partida(Jogo):
         self.no_jogadas = []
         self.historico = []
         self.pentago = Pentago(["-"]*36)
+        # self.pentago = Pentago(["-", "-", "-", "-", "-", "-"] +
+        #                        ["-", "-", "-", "-", "-", "-"] + 
+        #                        ["-", "-", "-", "-", "-", "-"] +
+        #                        ["-", "B", "B", "-", "-", "-"] +
+        #                        ["B", "B", "B", "-", "-", "-"] +
+        #                        ["B", "B", "B", "-", "-", "-"])
         no_inicial = self.pentago.iniciar()
         self.no_jogadas.append(no_inicial)        
         print(self.pentago.imprimir(no_inicial.estado_antes_giro))
@@ -52,8 +58,13 @@ class Partida(Jogo):
         no_novo.estado_apos_giro = self.pentago.executarGiro(no_novo.estado_antes_giro, jogada)
 
         self.pentago = Pentago(no_novo.estado_apos_giro, no_novo)
-
+        
+        self.historico.append(jogada)
+        
         self.jogador_turno = self.trocarTurno()
+
+        print()
+        print(self.pentago.imprimir(no_novo.estado_apos_giro))
 
         return self
     

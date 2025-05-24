@@ -34,7 +34,6 @@ def main():
             no = partida.pentago.no
     
             partida.no_jogadas.append(no)
-            partida.historico.append(jogada_humano)
     
             #if rodada_atual >= 9:
             if partida.venceu() or partida.empate():
@@ -42,23 +41,22 @@ def main():
                 break     
             
             #if rodada_atual >= 9:
-            if partida.venceu() or partida.empate():
-                partida.finalizarPartida(no, partida.no_anterior, jogada_humano)
-                break
+            # if partida.venceu() or partida.empate():
+            #     partida.finalizarPartida(no, partida.no_anterior, jogada_humano)
+            #     break
 
         if partida.jogador_turno is agente:
             print("\nVez do agente\n")
             
-            jogada_agente = agente.jogar(partida)
-
             partida.no_anterior = partida.no_jogadas.pop()
+            
+            jogada_agente = agente.jogar(partida)
 
             partida = partida.jogar(jogada_agente)
         
             no = partida.pentago.no
 
             partida.no_jogadas.append(no)
-            partida.historico.append(jogada_agente)
 
             #if rodada_atual >= 9:
             if partida.venceu() or partida.empate():
@@ -66,9 +64,9 @@ def main():
                 break     
             
             #if rodada_atual >= 9:
-            if partida.venceu() or partida.empate():
-                partida.finalizarPartida(no, partida.no_anterior, jogada_agente)
-                break
+            # if partida.venceu() or partida.empate():
+            #     partida.finalizarPartida(no, partida.no_anterior, jogada_agente)
+            #     break
 
         print()
         print(partida.pentago.imprimir(no.estado_apos_giro))

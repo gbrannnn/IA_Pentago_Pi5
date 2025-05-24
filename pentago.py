@@ -125,15 +125,30 @@ class Pentago():
         quantidades_de_pecas_B = []
         quantidades_de_pecas_W = []
         for valor in valores_cada_coordenda:
-            countador_B_adjacente = 0
-            countador_W_adjacente = 0
-            for i in range(len(valor) - 1):
-                if valor[i] == valor[i+1] and valor[i] == "B":
-                    countador_B_adjacente += 1 if countador_B_adjacente !=0 else 2
-                elif valor[i] == valor[i+1] and valor[i] == "W":
-                    countador_W_adjacente += 1 if countador_W_adjacente !=0 else 2
-            quantidades_de_pecas_B.append(countador_B_adjacente)
-            quantidades_de_pecas_W.append(countador_W_adjacente)
+            sequencias_B = []
+            sequencias_W = []
+            contador_B = 0
+            contador_W = 0
+            for i in range(len(valor)):
+                if valor[i] == "B":
+                    contador_B += 1
+                    if i == len(valor) - 1:
+                        sequencias_B.append(contador_B)
+                        contador_B = 0
+                elif contador_B > 0:
+                    sequencias_B.append(contador_B)
+                    contador_B = 0
+            quantidades_de_pecas_B.append(max(sequencias_B) if len(sequencias_B) > 0 else 0)
+            for j in range(len(valor)):
+                if valor[j] == "W":
+                    contador_W += 1
+                    if j == len(valor) - 1:
+                        sequencias_W.append(contador_W)
+                        contador_W = 0 
+                elif contador_W > 0:
+                    sequencias_W.append(contador_W)
+                    contador_W = 0
+            quantidades_de_pecas_W.append(max(sequencias_W) if len(sequencias_W) > 0 else 0)
 
         quantidades_de_pecas = {"B": quantidades_de_pecas_B, "W": quantidades_de_pecas_W}
 
