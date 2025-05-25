@@ -125,15 +125,30 @@ class Pentago():
         quantidades_de_pecas_B = []
         quantidades_de_pecas_W = []
         for valor in valores_cada_coordenda:
-            countador_B_adjacente = 0
-            countador_W_adjacente = 0
-            for i in range(len(valor) - 1):
-                if valor[i] == valor[i+1] and valor[i] == "B":
-                    countador_B_adjacente += 1 if countador_B_adjacente !=0 else 2
-                elif valor[i] == valor[i+1] and valor[i] == "W":
-                    countador_W_adjacente += 1 if countador_W_adjacente !=0 else 2
-            quantidades_de_pecas_B.append(countador_B_adjacente)
-            quantidades_de_pecas_W.append(countador_W_adjacente)
+            sequencias_B = []
+            sequencias_W = []
+            contador_B = 0
+            contador_W = 0
+            for i in range(len(valor)):
+                if valor[i] == "B":
+                    contador_B += 1
+                    if i == len(valor) - 1:
+                        sequencias_B.append(contador_B)
+                        contador_B = 0
+                elif contador_B > 0:
+                    sequencias_B.append(contador_B)
+                    contador_B = 0
+            quantidades_de_pecas_B.append(max(sequencias_B) if len(sequencias_B) > 0 else 0)
+            for j in range(len(valor)):
+                if valor[j] == "W":
+                    contador_W += 1
+                    if j == len(valor) - 1:
+                        sequencias_W.append(contador_W)
+                        contador_W = 0 
+                elif contador_W > 0:
+                    sequencias_W.append(contador_W)
+                    contador_W = 0
+            quantidades_de_pecas_W.append(max(sequencias_W) if len(sequencias_W) > 0 else 0)
 
         quantidades_de_pecas = {"B": quantidades_de_pecas_B, "W": quantidades_de_pecas_W}
 
@@ -177,19 +192,29 @@ class Pentago():
                 quadrante_vizinho_1 = q3
                 quadrante_vizinho_2 = q2
                 quadrante_vizinho_3 = q1
-
+        
         valores_cada_coordenda = []
         for coordenada in coordenadas_qudrante:
             print(coordenada)
+            arr_coordenada_quadrante = estado[quadrante[coordenada].value]
             if coordenada in ("CIMA", "CENTRO_HORIZONTAL", "BAIXO"):
-                arr = self.inverterArray(estado, quadrante, coordenada)
-                valores_cada_coordenda.append(arr + estado[quadrante_vizinho_1[coordenada].value])
+                arr_vizinho = estado[quadrante_vizinho_1[coordenada].value]
+                if quadrante.__name__ in ("Quadrante_2", "Quadrante_4"):
+                    valores_cada_coordenda.append(arr_vizinho + arr_coordenada_quadrante)
+                    continue
+                valores_cada_coordenda.append(arr_coordenada_quadrante + arr_vizinho)
             elif coordenada in ("ESQUERDA", "CENTRO_VERTICAL", "DIREITA"):
-                arr = self.inverterArray(estado, quadrante, coordenada)
-                valores_cada_coordenda.append(arr + estado[quadrante_vizinho_2[coordenada].value])
+                arr_vizinho = estado[quadrante_vizinho_2[coordenada].value]
+                if quadrante.__name__ in("Quadrante_3", "Quadrante_4"):
+                    valores_cada_coordenda.append(arr_vizinho + arr_coordenada_quadrante)
+                    continue
+                valores_cada_coordenda.append(arr_coordenada_quadrante + arr_vizinho)
             elif coordenada in quadrante.__members__ and (coordenada in ("DIAGONAL_DIREITA", "DIAGONAL_ESQUERDA")):
-                arr = self.inverterArray(estado, quadrante, coordenada)
-                valores_cada_coordenda.append(arr + estado[quadrante_vizinho_3[coordenada].value])
+                arr_vizinho = estado[quadrante_vizinho_3[coordenada].value]
+                if quadrante.__name__ in("Quadrante_3", "Quadrante_4"):
+                    valores_cada_coordenda.append(arr_vizinho + arr_coordenada_quadrante)
+                    continue
+                valores_cada_coordenda.append(arr_coordenada_quadrante + arr_vizinho)
         
         return valores_cada_coordenda
 

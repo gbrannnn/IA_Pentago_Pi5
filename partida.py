@@ -11,6 +11,12 @@ class Partida(Jogo):
         self.no_jogadas = []
         self.historico = []
         self.pentago = Pentago(["-"]*36)
+        # self.pentago = Pentago(["W", "W", "-", "W", "W", "W"] +
+        #                        ["-", "-", "-", "-", "-", "-"] + 
+        #                        ["-", "-", "-", "-", "-", "-"] +
+        #                        ["-", "-", "-", "-", "-", "-"] +
+        #                        ["-", "-", "-", "-", "-", "-"] +
+        #                        ["-", "-", "-", "-", "-", "-"])
         no_inicial = self.pentago.iniciar()
         self.no_jogadas.append(no_inicial)        
         print(self.pentago.imprimir(no_inicial.estado_antes_giro))
@@ -37,7 +43,7 @@ class Partida(Jogo):
 
         jogadas = []
         for i in range(len(estado)):
-            jogada["index"] = i
+            jogada["index"] = random.choice(list(range(36)))
             jogada["quadrante"] = random.choice(["q1", "q2", "q3", "q4"]) 
             jogada["direcao"] = random.choice(["d", "e"])
             if self.pentago.jogadaValida(estado, jogada):
@@ -52,18 +58,25 @@ class Partida(Jogo):
         no_novo.estado_apos_giro = self.pentago.executarGiro(no_novo.estado_antes_giro, jogada)
 
         self.pentago = Pentago(no_novo.estado_apos_giro, no_novo)
-
+        
+        self.historico.append(jogada)
+        
         self.jogador_turno = self.trocarTurno()
+
+        print()
+        print(self.pentago.imprimir(no_novo.estado_apos_giro))
 
         return self
     
     def trocarTurno(self):
-        if self.jogador_turno is self.jogadores[0]:
-            return self.jogadores[1] # agente
-        elif self.jogador_turno is self.jogadores[1]:
-            return self.jogadores[0] # humano
-        
-        return
+        humano, agente = self.jogadores
+        if self.jogador_turno is humano:
+            return agente
+        elif self.jogador_turno is agente:
+            return humano
+        else:
+            # Fallback - nunca deveria chegar aqui
+            raise Exception(f"Jogador turno inválido: {self.jogador_turno}")
 
     def calcular_utilidade(self, jogador):
         estado = self.pentago.estado
@@ -71,16 +84,16 @@ class Partida(Jogo):
 
         quantidades_de_pecas = self.pentago.verificarSequenciaPecas(estado, jogada["index"], jogada["quadrante"])
 
-        if quantidades_de_pecas[jogador.identificador] == 2:
-            return 0.4 if jogador.min_max == "max" else -0.4
-        elif quantidades_de_pecas[jogador.identificador] == 3:
-            return 0.6 if jogador.min_max == "max" else -0.6
-        elif quantidades_de_pecas[jogador.identificador] == 4:
-            return 0.8 if jogador.min_max == "max" else -0.8
-        elif quantidades_de_pecas[jogador.identificador] == 5 or self.venceu():
-            return 1 if jogador.min_max == "max" else -1
+        maior_sequencia = max(quantidades_de_pecas[jogador.identificador])
 
-        return 0.2
+        pontos = 0
+
+        if jogador.min_max == "max":
+            pontos += 10 ** maior_sequencia
+        elif jogador.min_max == "min":
+            pontos -= 10 ** maior_sequencia
+
+        return pontos
     
     def turno(self):
         return self.jogador_turno

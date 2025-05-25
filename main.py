@@ -1,4 +1,5 @@
 from partida import Partida
+import copy
 
 def main():
     partida = Partida()
@@ -13,8 +14,7 @@ def main():
         raise Exception("Não está de acordo com as intruções")
     
     print("Partida iniciada")
-    
-    rodadas = 36
+
     rodada_atual = 1
     while True:
         if partida.jogador_turno is humano:
@@ -34,47 +34,34 @@ def main():
             no = partida.pentago.no
     
             partida.no_jogadas.append(no)
-            partida.historico.append(jogada_humano)
     
             #if rodada_atual >= 9:
             if partida.venceu() or partida.empate():
                 partida.finalizarPartida(no, partida.no_anterior, jogada_humano)
-                break     
-            
-            #if rodada_atual >= 9:
-            if partida.venceu() or partida.empate():
-                partida.finalizarPartida(no, partida.no_anterior, jogada_humano)
                 break
-
-        if partida.jogador_turno is agente:
+        elif partida.jogador_turno is agente:
             print("\nVez do agente\n")
             
-            jogada_agente = agente.jogar(partida)
-
             partida.no_anterior = partida.no_jogadas.pop()
+            
+            jogada_agente = agente.jogar(copy.deepcopy(partida))
 
             partida = partida.jogar(jogada_agente)
-        
+
             no = partida.pentago.no
 
             partida.no_jogadas.append(no)
-            partida.historico.append(jogada_agente)
 
             #if rodada_atual >= 9:
             if partida.venceu() or partida.empate():
                 partida.finalizarPartida(no, partida.no_anterior, jogada_agente)
                 break     
-            
-            #if rodada_atual >= 9:
-            if partida.venceu() or partida.empate():
-                partida.finalizarPartida(no, partida.no_anterior, jogada_agente)
-                break
 
         print()
         print(partida.pentago.imprimir(no.estado_apos_giro))
         rodada_atual += 1
     
-    print(partida.historico)
+    print(partida.historico.pop())
     return
 
 main()

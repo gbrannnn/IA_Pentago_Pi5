@@ -69,6 +69,14 @@ class JogadorHumano(Jogador):
             print("valor de Index Invalido!!, deve ser menor que 36") 
             return False
         
+        if jogada_dados_arr[1] not in ["q1", "q2", "q3", "q4"]:
+            print("Valor de Quadrante Invalido!!, deve ser um dos seguintes valores: q1, q2, q3, q4")
+            return False
+        
+        if jogada_dados_arr[2] not in ["d", "e"]:
+            print("Valor de Direção Invalido!!, deve ser um dos seguintes valores: d, e")
+            return False
+
         return True
 
 from minimax import melhor_jogada_agente_poda, minimax_alfabeta
