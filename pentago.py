@@ -192,19 +192,29 @@ class Pentago():
                 quadrante_vizinho_1 = q3
                 quadrante_vizinho_2 = q2
                 quadrante_vizinho_3 = q1
-
+        
         valores_cada_coordenda = []
         for coordenada in coordenadas_qudrante:
             print(coordenada)
+            arr_coordenada_quadrante = estado[quadrante[coordenada].value]
             if coordenada in ("CIMA", "CENTRO_HORIZONTAL", "BAIXO"):
-                arr = self.inverterArray(estado, quadrante, coordenada)
-                valores_cada_coordenda.append(arr + estado[quadrante_vizinho_1[coordenada].value])
+                arr_vizinho = estado[quadrante_vizinho_1[coordenada].value]
+                if quadrante.__name__ in ("Quadrante_2", "Quadrante_4"):
+                    valores_cada_coordenda.append(arr_vizinho + arr_coordenada_quadrante)
+                    continue
+                valores_cada_coordenda.append(arr_coordenada_quadrante + arr_vizinho)
             elif coordenada in ("ESQUERDA", "CENTRO_VERTICAL", "DIREITA"):
-                arr = self.inverterArray(estado, quadrante, coordenada)
-                valores_cada_coordenda.append(arr + estado[quadrante_vizinho_2[coordenada].value])
+                arr_vizinho = estado[quadrante_vizinho_2[coordenada].value]
+                if quadrante.__name__ in("Quadrante_3", "Quadrante_4"):
+                    valores_cada_coordenda.append(arr_vizinho + arr_coordenada_quadrante)
+                    continue
+                valores_cada_coordenda.append(arr_coordenada_quadrante + arr_vizinho)
             elif coordenada in quadrante.__members__ and (coordenada in ("DIAGONAL_DIREITA", "DIAGONAL_ESQUERDA")):
-                arr = self.inverterArray(estado, quadrante, coordenada)
-                valores_cada_coordenda.append(arr + estado[quadrante_vizinho_3[coordenada].value])
+                arr_vizinho = estado[quadrante_vizinho_3[coordenada].value]
+                if quadrante.__name__ in("Quadrante_3", "Quadrante_4"):
+                    valores_cada_coordenda.append(arr_vizinho + arr_coordenada_quadrante)
+                    continue
+                valores_cada_coordenda.append(arr_coordenada_quadrante + arr_vizinho)
         
         return valores_cada_coordenda
 

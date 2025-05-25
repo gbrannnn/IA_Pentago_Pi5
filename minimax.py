@@ -54,6 +54,7 @@ def melhor_jogada_agente_poda(jogo, profundidade_maxima = 8):
   melhor_jogada = -1
   for proximo_jogo in jogo.jogos_validos():
     utilidade = minimax_alfabeta(jogo.jogar(proximo_jogo), False, jogo.turno(), profundidade_maxima)
+    print(utilidade)
     if utilidade > melhor_valor:
       melhor_valor = utilidade
       melhor_jogada = proximo_jogo
