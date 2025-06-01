@@ -98,7 +98,7 @@ class Pentago():
 
     def verificarSequenciaPecas(self, estado, index, quadrante_giro=None):
         quadrante = self.verificarQudranteJogada(index)
-        print(quadrante.__name__)
+        #print(quadrante.__name__)
 
         if quadrante_giro == None:
             coordenadas_quadrante = self.pegarDoQuadranteCoordenadasAprtirDoIndex(estado, quadrante, index)
@@ -120,7 +120,7 @@ class Pentago():
             valores_cada_coordenda.append(diagonal_principal_direita)
             valores_cada_coordenda.append(diagonal_principal_esquerda)
     
-        print(valores_cada_coordenda)
+        #print(valores_cada_coordenda)
         
         quantidades_de_pecas_B = []
         quantidades_de_pecas_W = []
@@ -152,7 +152,7 @@ class Pentago():
 
         quantidades_de_pecas = {"B": quantidades_de_pecas_B, "W": quantidades_de_pecas_W}
 
-        print(quantidades_de_pecas)
+        #print(quantidades_de_pecas)
         return quantidades_de_pecas
     
     def pegarDoQuadranteCoordenadasAprtirDoIndex(self, estado, quadrante, index):
@@ -195,7 +195,7 @@ class Pentago():
         
         valores_cada_coordenda = []
         for coordenada in coordenadas_qudrante:
-            print(coordenada)
+            #print(coordenada)
             arr_coordenada_quadrante = estado[quadrante[coordenada].value]
             if coordenada in ("CIMA", "CENTRO_HORIZONTAL", "BAIXO"):
                 arr_vizinho = estado[quadrante_vizinho_1[coordenada].value]
