@@ -95,36 +95,46 @@ class Pentago():
             case default:
                 raise Exception("Quadrante não existente")
         return q
+    
+    def verificarSequenciaPecas2(self, estado):
+        estado_copia = estado.copy()
 
-    def verificarSequenciaPecas(self, estado, index, quadrante_giro=None):
-        quadrante = self.verificarQudranteJogada(index)
-        print(quadrante.__name__)
+        valor_cada_coordenada = []
 
-        if quadrante_giro == None:
-            coordenadas_quadrante = self.pegarDoQuadranteCoordenadasAprtirDoIndex(estado, quadrante, index)
-        else:
-            coordenadas_quadrante = self.pegarCoordenadasQuadrante(quadrante) 
+        valor_cada_coordenada.append(estado_copia[q1.CIMA.value] + estado_copia[q2.CIMA.value])
+        valor_cada_coordenada.append(estado_copia[q1.CENTRO_HORIZONTAL.value] + estado_copia[q2.CENTRO_HORIZONTAL.value])
+        valor_cada_coordenada.append(estado_copia[q1.BAIXO.value] + estado_copia[q2.BAIXO.value])
 
-        valores_cada_coordenda = self.concatenarCoordenadasQuadrante(estado, quadrante, coordenadas_quadrante)
-        
+        valor_cada_coordenada.append(estado_copia[q1.DIREITA.value] + estado_copia[q3.DIREITA.value])
+        valor_cada_coordenada.append(estado_copia[q1.CENTRO_VERTICAL.value] + estado_copia[q3.CENTRO_VERTICAL.value])
+        valor_cada_coordenada.append(estado_copia[q1.ESQUERDA.value] + estado_copia[q3.ESQUERDA.value])
+
+        valor_cada_coordenada.append(estado_copia[q1.DIAGONAL_DIREITA.value] + estado_copia[q4.DIAGONAL_DIREITA.value])
+
+        valor_cada_coordenada.append(estado_copia[q3.CIMA.value] + estado_copia[q4.CIMA.value])
+        valor_cada_coordenada.append(estado_copia[q3.CENTRO_HORIZONTAL.value] + estado_copia[q4.CENTRO_HORIZONTAL.value])
+        valor_cada_coordenada.append(estado_copia[q3.BAIXO.value] + estado_copia[q4.BAIXO.value])
+
+        valor_cada_coordenada.append(estado_copia[q2.DIREITA.value] + estado_copia[q4.DIREITA.value])
+        valor_cada_coordenada.append(estado_copia[q2.CENTRO_VERTICAL.value] + estado_copia[q4.CENTRO_VERTICAL.value])
+        valor_cada_coordenada.append(estado_copia[q2.ESQUERDA.value] + estado_copia[q4.ESQUERDA.value])
+
+        valor_cada_coordenada.append(estado_copia[q2.DIAGONAL_ESQUERDA.value] + estado_copia[q3.DIAGONAL_ESQUERDA.value])
+
         outrasDiagonais = 4
         indexInicioOutraDiagonais = [1, 4, 6, 11]
         indexFinalOutraDiagonais = [29, 24, 34, 31]
         for i in range(outrasDiagonais):
             step = 7 if i % 2 == 0 else 5
-            valores_cada_coordenda.append(estado[slice(indexInicioOutraDiagonais[i], indexFinalOutraDiagonais[i] + 1, step)])
+            valor_cada_coordenada.append(estado[slice(indexInicioOutraDiagonais[i], indexFinalOutraDiagonais[i] + 1, step)])
+            
+        return self.contarQuantidadeDePecas(valor_cada_coordenada)
 
-        if quadrante_giro != None:
-            diagonal_principal_direita = estado[slice(0,None,7)]
-            diagonal_principal_esquerda = estado[slice(5,31,5)]
-            valores_cada_coordenda.append(diagonal_principal_direita)
-            valores_cada_coordenda.append(diagonal_principal_esquerda)
-    
-        print(valores_cada_coordenda)
-        
+
+    def contarQuantidadeDePecas(self, valor_cada_coordenada):
         quantidades_de_pecas_B = []
         quantidades_de_pecas_W = []
-        for valor in valores_cada_coordenda:
+        for valor in valor_cada_coordenada:
             sequencias_B = []
             sequencias_W = []
             contador_B = 0
@@ -138,116 +148,147 @@ class Pentago():
                 elif contador_B > 0:
                     sequencias_B.append(contador_B)
                     contador_B = 0
-            quantidades_de_pecas_B.append(max(sequencias_B) if len(sequencias_B) > 0 else 0)
-            for j in range(len(valor)):
-                if valor[j] == "W":
+                
+                if valor[i] == "W":
                     contador_W += 1
-                    if j == len(valor) - 1:
+                    if i == len(valor) - 1:
                         sequencias_W.append(contador_W)
                         contador_W = 0 
                 elif contador_W > 0:
                     sequencias_W.append(contador_W)
                     contador_W = 0
+
+            quantidades_de_pecas_B.append(max(sequencias_B) if len(sequencias_B) > 0 else 0)
             quantidades_de_pecas_W.append(max(sequencias_W) if len(sequencias_W) > 0 else 0)
 
         quantidades_de_pecas = {"B": quantidades_de_pecas_B, "W": quantidades_de_pecas_W}
 
-        print(quantidades_de_pecas)
         return quantidades_de_pecas
     
-    def pegarDoQuadranteCoordenadasAprtirDoIndex(self, estado, quadrante, index):
-        coordenadas_quadrante = []
-        for q in quadrante :
-            if q.name == "DOMINIO":
-                continue
+        #print(quadrante.__name__)
+    # def verificarSequenciaPecas(self, estado, index, quadrante_giro=None):
+    #     quadrante = self.verificarQudranteJogada(index)
+    #     #print(quadrante.__name__)
 
-            r = self.sliceParaRange(q.value.start, q.value.stop, q.value.step, estado)
-            if index in r:
-                coordenadas_quadrante.append(q.name)
-        return coordenadas_quadrante
+    #     if quadrante_giro == None:
+    #         coordenadas_quadrante = self.pegarDoQuadranteCoordenadasAprtirDoIndex(estado, quadrante, index)
+    #     else:
+    #         coordenadas_quadrante = self.pegarCoordenadasQuadrante(quadrante) 
 
-    def pegarCoordenadasQuadrante(self, quadrante):
-        coordenadas_quadrante = []
-        for q in quadrante :
-            if q.name == "DOMINIO":
-                continue
-            coordenadas_quadrante.append(q.name)
-        return coordenadas_quadrante
+    #     valores_cada_coordenda = self.concatenarCoordenadasQuadrante(estado, quadrante, coordenadas_quadrante)
+        
+    #     outrasDiagonais = 4
+    #     indexInicioOutraDiagonais = [1, 4, 6, 11]
+    #     indexFinalOutraDiagonais = [29, 24, 34, 31]
+    #     for i in range(outrasDiagonais):
+    #         step = 7 if i % 2 == 0 else 5
+    #         valores_cada_coordenda.append(estado[slice(indexInicioOutraDiagonais[i], indexFinalOutraDiagonais[i] + 1, step)])
 
-    def concatenarCoordenadasQuadrante(self, estado, quadrante, coordenadas_qudrante):
-        match quadrante.__name__:
-            case "Quadrante_1":
-                quadrante_vizinho_1 = q2          
-                quadrante_vizinho_2 = q3
-                quadrante_vizinho_3 = q4
-            case "Quadrante_2":
-                quadrante_vizinho_1 = q1
-                quadrante_vizinho_2 = q4
-                quadrante_vizinho_3 = q3
-            case "Quadrante_3":
-                quadrante_vizinho_1 = q4
-                quadrante_vizinho_2 = q1
-                quadrante_vizinho_3 = q2
-            case "Quadrante_4":
-                quadrante_vizinho_1 = q3
-                quadrante_vizinho_2 = q2
-                quadrante_vizinho_3 = q1
-        
-        valores_cada_coordenda = []
-        for coordenada in coordenadas_qudrante:
-            print(coordenada)
-            arr_coordenada_quadrante = estado[quadrante[coordenada].value]
-            if coordenada in ("CIMA", "CENTRO_HORIZONTAL", "BAIXO"):
-                arr_vizinho = estado[quadrante_vizinho_1[coordenada].value]
-                if quadrante.__name__ in ("Quadrante_2", "Quadrante_4"):
-                    valores_cada_coordenda.append(arr_vizinho + arr_coordenada_quadrante)
-                    continue
-                valores_cada_coordenda.append(arr_coordenada_quadrante + arr_vizinho)
-            elif coordenada in ("ESQUERDA", "CENTRO_VERTICAL", "DIREITA"):
-                arr_vizinho = estado[quadrante_vizinho_2[coordenada].value]
-                if quadrante.__name__ in("Quadrante_3", "Quadrante_4"):
-                    valores_cada_coordenda.append(arr_vizinho + arr_coordenada_quadrante)
-                    continue
-                valores_cada_coordenda.append(arr_coordenada_quadrante + arr_vizinho)
-            elif coordenada in quadrante.__members__ and (coordenada in ("DIAGONAL_DIREITA", "DIAGONAL_ESQUERDA")):
-                arr_vizinho = estado[quadrante_vizinho_3[coordenada].value]
-                if quadrante.__name__ in("Quadrante_3", "Quadrante_4"):
-                    valores_cada_coordenda.append(arr_vizinho + arr_coordenada_quadrante)
-                    continue
-                valores_cada_coordenda.append(arr_coordenada_quadrante + arr_vizinho)
-        
-        return valores_cada_coordenda
+    #     if quadrante_giro != None:
+    #         diagonal_principal_direita = estado[slice(0,None,7)]
+    #         diagonal_principal_esquerda = estado[slice(5,31,5)]
+    #         valores_cada_coordenda.append(diagonal_principal_direita)
+    #         valores_cada_coordenda.append(diagonal_principal_esquerda)
+    
+    #     #print(valores_cada_coordenda)
+    #     quantidades_de_pecas = self.contarQuantidadeDePecas(valores_cada_coordenda)
 
-    def inverterArray(self, estado, quadrante, coordenada):
-        arr = estado[quadrante[coordenada].value]
-        if quadrante.__name__ == "Quadrante_1" :
-            arr = estado[quadrante[coordenada].value]
-        elif quadrante.__name__ == "Quadrante_2" and coordenada in ("CIMA", "CENTRO_HORIZONTAL", "BAIXO"):
-            arr = estado[quadrante[coordenada].value]
-            arr.reverse()
-        elif quadrante.__name__ == "Quadrante_3" and coordenada in ("ESQUERDA", "CENTRO_VERTICAL", "DIREITA", "DIAGONAL_ESQUERDA"):
-            arr = estado[quadrante[coordenada].value]
-            arr.reverse()
-        elif quadrante.__name__ == "Quadrante_4":
-            arr = estado[quadrante[coordenada].value]
-            arr.reverse()
-        
-        return arr
+    #     #print(quantidades_de_pecas)
+    #     return quantidades_de_pecas
+    
+    # def pegarDoQuadranteCoordenadasAprtirDoIndex(self, estado, quadrante, index):
+    #     coordenadas_quadrante = []
+    #     for q in quadrante :
+    #         if q.name == "DOMINIO":
+    #             continue
 
-    def sliceParaRange(self, start, stop, step, lista):
-        start = 0 if start is None else start
-        stop = len(lista) if stop is None else stop
-        step = 1 if step is None else step
-        return range(start, stop, step)
+    #         r = self.sliceParaRange(q.value.start, q.value.stop, q.value.step, estado)
+    #         if index in r:
+    #             coordenadas_quadrante.append(q.name)
+    #     return coordenadas_quadrante
+
+    # def pegarCoordenadasQuadrante(self, quadrante):
+    #     coordenadas_quadrante = []
+    #     for q in quadrante :
+    #         if q.name == "DOMINIO":
+    #             continue
+    #         coordenadas_quadrante.append(q.name)
+    #     return coordenadas_quadrante
+
+    # def concatenarCoordenadasQuadrante(self, estado, quadrante, coordenadas_qudrante):
+    #     match quadrante.__name__:
+    #         case "Quadrante_1":
+    #             quadrante_vizinho_1 = q2          
+    #             quadrante_vizinho_2 = q3
+    #             quadrante_vizinho_3 = q4
+    #         case "Quadrante_2":
+    #             quadrante_vizinho_1 = q1
+    #             quadrante_vizinho_2 = q4
+    #             quadrante_vizinho_3 = q3
+    #         case "Quadrante_3":
+    #             quadrante_vizinho_1 = q4
+    #             quadrante_vizinho_2 = q1
+    #             quadrante_vizinho_3 = q2
+    #         case "Quadrante_4":
+    #             quadrante_vizinho_1 = q3
+    #             quadrante_vizinho_2 = q2
+    #             quadrante_vizinho_3 = q1
         
-    def verificarQudranteJogada(self, index):
-        if index in q1.DOMINIO.value:
-            q = q1
-        elif index in q2.DOMINIO.value:
-            q = q2
-        elif index in q3.DOMINIO.value:
-            q = q3
-        elif index in q4.DOMINIO.value:
-            q = q4
+    #     valores_cada_coordenda = []
+    #     for coordenada in coordenadas_qudrante:
+    #         #print(coordenada)
+    #         arr_coordenada_quadrante = estado[quadrante[coordenada].value]
+    #         if coordenada in ("CIMA", "CENTRO_HORIZONTAL", "BAIXO"):
+    #             arr_vizinho = estado[quadrante_vizinho_1[coordenada].value]
+    #             if quadrante.__name__ in ("Quadrante_2", "Quadrante_4"):
+    #                 valores_cada_coordenda.append(arr_vizinho + arr_coordenada_quadrante)
+    #                 continue
+    #             valores_cada_coordenda.append(arr_coordenada_quadrante + arr_vizinho)
+    #         elif coordenada in ("ESQUERDA", "CENTRO_VERTICAL", "DIREITA"):
+    #             arr_vizinho = estado[quadrante_vizinho_2[coordenada].value]
+    #             if quadrante.__name__ in("Quadrante_3", "Quadrante_4"):
+    #                 valores_cada_coordenda.append(arr_vizinho + arr_coordenada_quadrante)
+    #                 continue
+    #             valores_cada_coordenda.append(arr_coordenada_quadrante + arr_vizinho)
+    #         elif coordenada in quadrante.__members__ and (coordenada in ("DIAGONAL_DIREITA", "DIAGONAL_ESQUERDA")):
+    #             arr_vizinho = estado[quadrante_vizinho_3[coordenada].value]
+    #             if quadrante.__name__ in("Quadrante_3", "Quadrante_4"):
+    #                 valores_cada_coordenda.append(arr_vizinho + arr_coordenada_quadrante)
+    #                 continue
+    #             valores_cada_coordenda.append(arr_coordenada_quadrante + arr_vizinho)
         
-        return q
+    #     return valores_cada_coordenda
+
+    # def inverterArray(self, estado, quadrante, coordenada):
+    #     arr = estado[quadrante[coordenada].value]
+    #     if quadrante.__name__ == "Quadrante_1" :
+    #         arr = estado[quadrante[coordenada].value]
+    #     elif quadrante.__name__ == "Quadrante_2" and coordenada in ("CIMA", "CENTRO_HORIZONTAL", "BAIXO"):
+    #         arr = estado[quadrante[coordenada].value]
+    #         arr.reverse()
+    #     elif quadrante.__name__ == "Quadrante_3" and coordenada in ("ESQUERDA", "CENTRO_VERTICAL", "DIREITA", "DIAGONAL_ESQUERDA"):
+    #         arr = estado[quadrante[coordenada].value]
+    #         arr.reverse()
+    #     elif quadrante.__name__ == "Quadrante_4":
+    #         arr = estado[quadrante[coordenada].value]
+    #         arr.reverse()
+        
+    #     return arr
+
+    # def sliceParaRange(self, start, stop, step, lista):
+    #     start = 0 if start is None else start
+    #     stop = len(lista) if stop is None else stop
+    #     step = 1 if step is None else step
+    #     return range(start, stop, step)
+        
+    # def verificarQudranteJogada(self, index):
+    #     if index in q1.DOMINIO.value:
+    #         q = q1
+    #     elif index in q2.DOMINIO.value:
+    #         q = q2
+    #     elif index in q3.DOMINIO.value:
+    #         q = q3
+    #     elif index in q4.DOMINIO.value:
+    #         q = q4
+        
+    #     return q

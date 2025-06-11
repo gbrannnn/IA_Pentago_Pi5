@@ -1,0 +1,98 @@
+
+2025-06-09 18:00:14,081 - INFO - ---Treinamento iniciado---
+2025-06-09 18:00:14,081 - INFO - N�mero de epis�dios: 5000
+2025-06-09 23:08:08,240 - INFO - Vitorias do agente Q-learning: 997
+2025-06-09 23:08:08,285 - INFO - Vitorias do agente minimax: 3674
+2025-06-09 23:08:08,285 - INFO - Empates: 266
+2025-06-09 23:08:08,285 - INFO - ---Treinamento Finalizado---
+2025-06-09 23:32:17,701 - INFO - ---Treinamento iniciado---
+2025-06-09 23:32:17,701 - INFO - N�mero de epis�dios: 5000
+2025-06-10 01:01:31,429 - INFO - ---Treinamento iniciado---
+2025-06-10 01:01:31,429 - INFO - N�mero de epis�dios: 5000
+2025-06-10 01:01:46,770 - INFO - ---Treinamento iniciado---
+2025-06-10 01:01:46,770 - INFO - N�mero de epis�dios: 5000
+2025-06-10 01:51:43,445 - INFO - Epis�dio 1000 finalizado
+2025-06-10 02:42:10,475 - INFO - Epis�dio 2000 finalizado
+2025-06-10 03:32:51,777 - INFO - Epis�dio 3000 finalizado
+2025-06-10 04:23:39,304 - INFO - Epis�dio 4000 finalizado
+2025-06-10 05:14:50,827 - INFO - Epis�dio 5000 finalizado
+2025-06-10 05:14:50,900 - INFO - Vitorias do agente Q-learning: 1059
+2025-06-10 05:14:50,900 - INFO - Vitorias do agente minimax: 3645
+2025-06-10 05:14:50,900 - INFO - Empates: 245
+2025-06-10 05:14:50,900 - INFO - ---Treinamento Finalizado---
+2025-06-10 07:11:19,642 - INFO - ---Treinamento iniciado---
+2025-06-10 07:11:19,642 - INFO - N�mero de epis�dios: 10000
+2025-06-10 08:05:14,378 - INFO - Epis�dio 1000 finalizado
+2025-06-10 08:58:39,770 - INFO - Epis�dio 2000 finalizado
+2025-06-10 09:52:53,708 - INFO - Epis�dio 3000 finalizado
+2025-06-10 10:47:04,652 - INFO - Epis�dio 4000 finalizado
+2025-06-10 11:41:45,419 - INFO - Epis�dio 5000 finalizado
+2025-06-10 12:36:18,179 - INFO - Epis�dio 6000 finalizado
+2025-06-10 13:31:46,530 - INFO - Epis�dio 7000 finalizado
+2025-06-10 14:27:59,860 - INFO - Epis�dio 8000 finalizado
+2025-06-10 15:24:06,092 - INFO - Epis�dio 9000 finalizado
+2025-06-10 16:21:09,188 - INFO - Epis�dio 10000 finalizado
+2025-06-10 16:21:09,396 - INFO - Vitorias do agente Q-learning: 2131
+2025-06-10 16:21:09,396 - INFO - Vitorias do agente minimax: 7305
+2025-06-10 16:21:09,396 - INFO - Empates: 449
+2025-06-10 16:21:09,396 - INFO - ---Treinamento Finalizado---
+2025-06-10 17:33:27,775 - INFO - ---Treinamento iniciado---
+2025-06-10 17:33:27,775 - INFO - N�mero de epis�dios: 5000
+2025-06-10 18:01:32,301 - INFO - Epis�dio 500 finalizado
+2025-06-10 18:28:47,897 - INFO - Epis�dio 1000 finalizado
+2025-06-10 18:57:58,809 - INFO - Epis�dio 1500 finalizado
+2025-06-10 19:26:59,073 - INFO - Epis�dio 2000 finalizado
+2025-06-10 19:54:32,963 - INFO - Epis�dio 2500 finalizado
+2025-06-10 20:24:55,358 - INFO - Epis�dio 3000 finalizado
+2025-06-10 21:00:18,344 - INFO - Epis�dio 3500 finalizado
+2025-06-10 21:33:44,893 - INFO - Epis�dio 4000 finalizado
+2025-06-10 22:13:22,589 - INFO - Epis�dio 4500 finalizado
+2025-06-10 22:42:39,635 - INFO - Epis�dio 5000 finalizado
+2025-06-10 22:42:39,872 - INFO - Vitorias do agente Q-learning: 1086
+2025-06-10 22:42:39,872 - INFO - Vitorias do agente minimax: 3641
+2025-06-10 22:42:39,872 - INFO - Empates: 227
+2025-06-10 16:21:09,396 - INFO - ---Treinamento Finalizado---
+2025-06-11 01:47:44,088 - INFO - ---Treinamento iniciado---
+2025-06-11 01:47:44,088 - INFO - N�mero de epis�dios: 5000
+2025-06-11 02:15:13,795 - INFO - Epis�dio 500 finalizado
+2025-06-11 02:42:55,316 - INFO - Epis�dio 1000 finalizado
+2025-06-11 03:10:41,600 - INFO - Epis�dio 1500 finalizado
+2025-06-11 03:38:44,282 - INFO - Epis�dio 2000 finalizado
+2025-06-11 04:07:03,433 - INFO - Epis�dio 2500 finalizado
+2025-06-11 04:35:36,547 - INFO - Epis�dio 3000 finalizado
+2025-06-11 05:04:18,068 - INFO - Epis�dio 3500 finalizado
+2025-06-11 05:33:18,731 - INFO - Epis�dio 4000 finalizado
+2025-06-11 06:02:27,891 - INFO - Epis�dio 4500 finalizado
+2025-06-11 06:32:12,948 - INFO - Epis�dio 5000 finalizado
+2025-06-11 06:32:13,336 - INFO - Vitorias do agente Q-learning: 1065
+2025-06-11 06:32:13,336 - INFO - Vitorias do agente minimax: 3665
+2025-06-11 06:32:13,336 - INFO - Empates: 215
+2025-06-11 06:32:13,336 - INFO - ---Treinamento Finalizado---
+2025-06-11 10:03:41,240 - INFO - ---Treinamento iniciado---
+2025-06-11 10:03:41,240 - INFO - N�mero de epis�dios: 5000
+2025-06-11 10:36:03,159 - INFO - Epis�dio 500 finalizado
+2025-06-11 11:08:03,824 - INFO - Epis�dio 1000 finalizado
+2025-06-11 11:38:19,959 - INFO - Epis�dio 1500 finalizado
+2025-06-11 12:08:36,759 - INFO - Epis�dio 2000 finalizado
+2025-06-11 12:41:19,552 - INFO - Epis�dio 2500 finalizado
+2025-06-11 13:12:17,351 - INFO - Epis�dio 3000 finalizado
+2025-06-11 13:42:57,269 - INFO - Epis�dio 3500 finalizado
+2025-06-11 14:17:02,663 - INFO - Epis�dio 4000 finalizado
+2025-06-11 14:51:27,562 - INFO - Epis�dio 4500 finalizado
+2025-06-11 15:24:02,744 - INFO - Epis�dio 5000 finalizado
+2025-06-11 15:24:03,266 - INFO - Vitorias do agente Q-learning: 1063
+2025-06-11 15:24:03,266 - INFO - Vitorias do agente minimax: 3667
+2025-06-11 15:24:03,266 - INFO - Empates: 221
+2025-06-11 15:24:03,266 - INFO - ---Treinamento Finalizado---
+2025-06-11 15:41:58,220 - INFO - ---Treinamento iniciado---
+2025-06-11 15:41:58,220 - INFO - N�mero de epis�dios: 10
+2025-06-11 15:43:52,467 - INFO - Vitorias do agente Q-learning: 4
+2025-06-11 15:43:52,467 - INFO - Vitorias do agente minimax: 5
+2025-06-11 15:43:52,467 - INFO - Empates: 1
+2025-06-11 15:43:52,468 - INFO - ---Treinamento Finalizado---
+2025-06-11 16:01:54,408 - INFO - ---Avaliacao iniciado---
+2025-06-11 16:01:54,408 - INFO - N�mero de epis�dios: 10
+2025-06-11 16:03:10,661 - INFO - Vitorias do agente Q-learning: 3
+2025-06-11 16:03:10,661 - INFO - Vitorias do agente minimax: 7
+2025-06-11 16:03:10,661 - INFO - Empates: 0
+2025-06-11 16:03:10,661 - INFO - ---Treinamento Finalizado---
