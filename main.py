@@ -1,8 +1,5 @@
 from partida import Partida
 from agente import Agente
-from qlearning import Qlearning
-import copy
-import time
 
 class Main:
     def jogar_pentago_contra_agente():
@@ -12,20 +9,10 @@ class Main:
 
         partida.jogador_turno = humano
 
-        agente_qlearning = Agente(partida)
+        agente_qlearning = Agente(agente.identificador, partida)
         if not agente_qlearning.carregar_modelo("agente_pentago.pkl"):
             print("Modelo não encontrado. Execute o treinamento primeiro.")
             return
-        
-        print("Treinando agente Q-learning...")
-        qlearning = Qlearning(agente_qlearning)
-        Q, politica = qlearning.calcular_tabela_q(estado_inicial=0, n_passos=50000)
-        print("Treinamento concluído!")
-
-        # print("\nImprimindo Valores por estado:")
-        # print(agente_qlearning.imprimir_q(Q))
-        # print("\nImprimindo Polítca ótima por estado:")
-        # print(agente_qlearning.imprimir_politica(politica))
 
         confirmacao_de_instrucoes = partida.instrucoes()
 
@@ -49,7 +36,7 @@ class Main:
                     continue
 
                 partida = partida.jogar(jogada_humano)
-                print(partida.historico)
+
                 no = partida.pentago.no
         
                 partida.no_jogadas.append(no)
@@ -58,7 +45,7 @@ class Main:
                     if partida.venceu() or partida.empate():
                         partida.finalizarPartida(no, partida.no_anterior, jogada_humano)
                         break
-                
+                    
             elif partida.jogador_turno is agente:
                 # print("\nVez do agente\n")
                 
@@ -73,7 +60,7 @@ class Main:
                 partida.no_anterior = partida.no_jogadas.pop()
                 
                 # Usar Q-learning para escolher a jogada
-                jogada_agente = agente_qlearning.escolher_jogada_qlearning(partida, agente_qlearning, politica)
+                jogada_agente = agente_qlearning.escolher_jogada_qlearning(partida)
 
                 partida = partida.jogar(jogada_agente)
 

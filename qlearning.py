@@ -25,7 +25,7 @@ class Qlearning:
             passo += 1
             estado = estado_inicial  # estado inicial
             limite = 0
-            while limite < limite_max and ( self.problema.partida.venceu() == False or self.problema.partida.empate() == False) if len(self.problema.partida.historico) > 0 else None:
+            while limite < limite_max and self.problema.partida.jogador_ganhador is None:
                 limite += 1
                 # escolha da acao
                 # random ou melhor da política baseado em uma taxa

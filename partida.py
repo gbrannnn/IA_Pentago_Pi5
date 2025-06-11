@@ -5,13 +5,13 @@ from jogador import JogadorHumano, JogadorAgente, JogadorAgenteQlearning
 from jogo import Jogo
 
 import random
-import logging
 
 class Partida(Jogo):
     def __init__(self):
         self.no_jogadas = []
         self.historico = []
         self.pentago = Pentago(["-"]*36)
+        #teste de caso
         # self.pentago = Pentago(["W", "W", "-", "W", "W", "W"] +
         #                        ["-", "-", "-", "-", "-", "-"] + 
         #                        ["-", "-", "-", "-", "-", "-"] +
@@ -22,19 +22,13 @@ class Partida(Jogo):
         self.no_jogadas.append(no_inicial)        
         print(self.pentago.imprimir(no_inicial.estado_antes_giro))
         self.jogador_turno = None
-
-        logging.basicConfig(
-            filename='meu_log.log',      # Nome do arquivo de saída
-            level=logging.INFO,          # Nível mínimo que será registrado
-            format='%(asctime)s - %(levelname)s - %(message)s' # Formato do log
-        )
         self.jogador_ganhador = None
     
     def inicializarJogadores(self, treino=False):
         if treino:
-            (jogador1, jogador2) = (JogadorAgenteQlearning("W"), JogadorAgente("B"))
+            (jogador1, jogador2) = (JogadorAgenteQlearning("B"), JogadorAgente("W"))
         else:
-            (jogador1, jogador2) = (JogadorHumano("B"), JogadorAgente("W"))
+            (jogador1, jogador2) = (JogadorHumano("W"), JogadorAgenteQlearning("B"))
             
         jogador1.define_proximo_turno(jogador2)
         jogador2.define_proximo_turno(jogador1)
@@ -54,7 +48,7 @@ class Partida(Jogo):
         estado = self.pentago.estado
 
         jogadas = []
-        for i in range(len(estado)):
+        for i in range(len(estado)*4):
             jogada["index"] = random.choice(list(range(36)))
             jogada["quadrante"] = random.choice(["q1", "q2", "q3", "q4"]) 
             jogada["direcao"] = random.choice(["d", "e"])
@@ -75,8 +69,8 @@ class Partida(Jogo):
         
         self.jogador_turno = self.trocarTurno()
 
-        print()
-        print(self.pentago.imprimir(no_novo.estado_apos_giro))
+        # print()
+        # print(self.pentago.imprimir(no_novo.estado_apos_giro))
 
         return self
     
@@ -92,9 +86,8 @@ class Partida(Jogo):
 
     def calcular_utilidade(self, jogador):
         estado = self.pentago.estado
-        jogada = self.historico[-1]
 
-        quantidades_de_pecas = self.pentago.verificarSequenciaPecas(estado, jogada["index"], jogada["quadrante"])
+        quantidades_de_pecas = self.pentago.verificarSequenciaPecas2(estado)
 
         maior_sequencia = max(quantidades_de_pecas[jogador.identificador])
 
@@ -115,9 +108,8 @@ class Partida(Jogo):
             return False
 
         estado = self.pentago.estado
-        jogada = self.historico[-1]
 
-        quantidades_de_pecas = self.pentago.verificarSequenciaPecas(estado, jogada["index"], jogada["quadrante"])
+        quantidades_de_pecas = self.pentago.verificarSequenciaPecas2(estado)
                                                                     
         valor_sequecia_vencedor = 5
         if any(valor >= valor_sequecia_vencedor for valor in quantidades_de_pecas["B"]):
@@ -135,12 +127,11 @@ class Partida(Jogo):
         if len(self.historico) <= 0:
             return False
         estado = self.pentago.estado
-        jogada = self.historico[-1]
         
-        quantidades_de_pecas = self.pentago.verificarSequenciaPecas(estado, jogada["index"], jogada["quadrante"])
-        
+        quantidades_de_pecas = self.pentago.verificarSequenciaPecas2(estado)
+
         valor_sequecia_vencedor = 5
-        if any(valor >= valor_sequecia_vencedor for valor in quantidades_de_pecas["B"]) and any(valor >= valor_sequecia_vencedor for valor in quantidades_de_pecas["W"]):
+        if (any(valor >= valor_sequecia_vencedor for valor in quantidades_de_pecas["B"]) and any(valor >= valor_sequecia_vencedor for valor in quantidades_de_pecas["W"])) or "-" not in estado:
             print("Empate!!! As duas peças possuem 5 em seqência")
             return True
 
@@ -151,8 +142,6 @@ class Partida(Jogo):
         self.no_jogadas.append(no)
         self.historico.append(jogada)
         print("Partida Finalizado!!")
-        logging.info(f'Jogador com a peca {self.jogador_ganhador} venceu!!!')
-        logging.info('Partida Finalizado!!')
         return    
     
     
