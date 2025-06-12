@@ -30,46 +30,6 @@ class Agente(Ambiente):
         self.n_estados = len(self.estados)
         self.n_acoes = len(self.acoes)
 
-    # def T(self, estado, acao):
-    #     """
-    #     Função de transição que retorna os possíveis estados resultantes e suas probabilidades
-    #     """
-
-    #     try:
-    #         # Simular a jogada
-    #         partida_simulada = self._simular_jogada(self.partida, acao)
-    #         novo_estado = partida_simulada.pentago.estado
-
-    #         # Atualizar listas de estados e ações
-    #         self.estados.append(novo_estado)
-    #         self.acoes.append(partida_simulada.pentago.jogos_validos())
-
-    #         # Para Pentago (jogo determinístico), retorna apenas um estado com probabilidade 1.0
-    #         return [(novo_estado, 1.0)]
-
-    #     except Exception as e:
-    #         print(f"Erro ao simular jogada: {e}")
-    #         return []
-
-    # def _simular_jogada(self, partida, acao):
-    #     """
-    #     Simula uma jogada sem modificar o estado original
-    #     """
-    #     partida_copia = copy.deepcopy(partida)
-
-    #     # Preparar dados da jogada
-    #     jogada = {
-    #         "corPeca": self.corPeca,
-    #         "index": acao["index"],
-    #         "quadrante": acao["quadrante"],
-    #         "direcao": acao["direcao"],
-    #     }
-
-    #     # Executar jogada na cópia
-    #     partida_copia = partida_copia.jogar(jogada)
-
-    #     return partida_copia
-
     def R(self, estado):
         """
         Função de recompensa - você pode implementar baseado na sua lógica de pontuação
@@ -108,24 +68,6 @@ class Agente(Ambiente):
         return 0.1  # Recompensa padrão pequena
 
     def escolher_jogada_qlearning(self, partida):
-        # """
-        # Escolhe a melhor jogada usando a política aprendida pelo Q-learning
-        # """
-        # estado_str = self.estado_para_string(partida.pentago.estado)
-        # print(estado_str)
-        # # se não apareceu no treinamento, escolhe aleatório
-        # if estado_str not in self.PI:
-        #     print("escolhendo aleatório")
-        #     return random.choice(partida.jogos_validos())
-
-        # # política guarda a ação em formato string
-        # acao_str = self.PI[estado_str]
-        # # procura a jogada válida cujo to_string bate
-        # for a in partida.jogos_validos():
-        #     if self.acao_para_string(a) == acao_str:
-        #         return a
-        # # fallback
-        # return random.choice(partida.jogos_validos())
         """
         Escolhe a melhor jogada usando a política aprendida pelo Q-learning com ε-greedy
         """
@@ -225,33 +167,3 @@ class Agente(Ambiente):
         except Exception as e:
             print("Erro ao carregar modelo:", e)
             return False
-        
-    def __str__(self):
-        return f"Agente {self.identificador} - Estados: {len(self.estados)}"
-
-    def imprimir_valor(self, V):
-        valor_texto = ""
-        for i in range(0, self.n_estados, self.n_acoes):
-            valor_texto += "|\t%.2f\t|\t%.2f\t|\t%.2f\t|\t%.2f\t|\n" % (V[i], V[i + 1], V[i + 2], V[i + 3])
-        return valor_texto
-
-    def imprimir_politica(self, politica):
-        poltica_texto = ""
-        ps = [] # política com símbolos
-        for estado in politica:
-            ps.append(self.acoes[estado])
-
-        for i in range(0, self.n_estados, self.n_acoes):
-            for j in range(0, self.n_acoes):
-                ps[i+j] = self.estados[i+j]
-            
-            poltica_texto += f"|\t{ps[i]}\t|\t{ps[i+1]}\t|\t{ps[i+2]}\t|\t{ps[i+3]}\t|\n"
-        return poltica_texto
-    
-    def imprimir_q(self, Q):
-        valor_texto = "|\ts\t|\ts\t|\ta\t|\tQ(s,a)\t|\n"
-            
-        for i in range(0, len(self.estados)):
-            for j in range(0, len(self.acoes)):
-                valor_texto += "|\t%s\t|\t%s\t|\t%s\t|\t%.2f\t|\n" % (i, self.estados[i], self.acoes[j], Q[i][j])
-        return valor_texto
