@@ -47,14 +47,6 @@ class Main:
                         break
                     
             elif partida.jogador_turno is agente:
-                # print("\nVez do agente\n")
-                
-                # partida.no_anterior = partida.no_jogadas.pop()
-                
-                # jogada_agente = agente.jogar(copy.deepcopy(partida))
-
-                # partida = partida.jogar(jogada_agente)
-
                 print("\nVez do agente Q-learning\n")
                 
                 partida.no_anterior = partida.no_jogadas.pop()
